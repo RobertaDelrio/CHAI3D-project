@@ -6,12 +6,29 @@
 
 //------------------------------------------------------------------------------
 #include "chai3d.h"
+//include all the header file needed
 //------------------------------------------------------------------------------
 #include <GLFW/glfw3.h>
 //------------------------------------------------------------------------------
 using namespace chai3d;
 using namespace std;
 //------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+// DECLARED CONSTANTS
+//---------------------------------------------------------------------------
+// Initial size (width/height) in pixels of the display window
+/*
+const int WINDOW_SIZE_W = 600;
+const int WINDOW_SIZE_H = 600;
+
+
+// Mouse menu options (right button)
+const int OPTION_FULLSCREEN = 1;
+const int OPTION_WINDOWDISPLAY = 2;
+// Maximum number of haptic devices supported in this demo
+const int MAX_DEVICES = 8;
+*/
 
 //------------------------------------------------------------------------------
 // GENERAL SETTINGS
@@ -36,6 +53,10 @@ bool mirroredDisplay = false;
 //------------------------------------------------------------------------------
 // DECLARED VARIABLES
 //------------------------------------------------------------------------------
+
+//A list of all available assignments 
+//Initialization of the objects part of a class declared in another .h
+//See git Haptics as example to handle the code in multiple files
 
 // a world that contains all objects of the virtual environment
 cWorld* world;
