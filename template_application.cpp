@@ -546,6 +546,13 @@ void updateHaptics(void)
 		// APPLY FORCES
 		/////////////////////////////////////////////////////////////////////
 
+		/*Example of a virtual wall ( see github repo)
+
+		cVector3d newPosition;
+		hapticDevice->getPosition(newPosition);
+
+		*/
+
 		// send computed force, torque, and gripper force to haptic device
 		hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
 
