@@ -78,7 +78,7 @@ bool mirroredDisplay = false;
 //---------------------------------------------------------------------------
 // DECLARED VARIABLES
 //---------------------------------------------------------------------------
-// A list of all available assignments
+// A list of all available tasks
 std::vector<Task*> tasks;
 volatile size_t currentTask = 0;
 
