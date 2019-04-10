@@ -5,7 +5,7 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
-/ -------------------------------------------------------------------------- -
+
 #include "cSetUp.h"
 using namespace std;
 //---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ using namespace std;
 Constructor of cTrial.
 */
 //===========================================================================
-cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticDevice> a_hapticDevice);
+cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_hapticDevice)
 
 {
 	// load the experiment conditions
@@ -51,10 +51,10 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 	m_camera->setClippingPlanes(0.01, 10.0);
 
 	// create a directional light source
-	m_light = new cDirectionalLight(world);
+	m_light = new cDirectionalLight(m_world);
 
 	// insert light source inside world
-	world->addChild(light);
+	m_world->addChild(m_light);
 
 	// enable light source
 	m_light->setEnabled(true);
@@ -74,6 +74,11 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 
 	start->setLocalPos(-0.7, -0.05, 0.0);
 	endp->setLocalPos(-0.7, 0.3, 0.0);
+
+	cVector3d startPosition;
+	start->setLocalPos(startPosition);
+	cVector3d endPosition;
+	endp->setLocalPos(endPosition);
 
 	pointColorEnd.setBlueAquamarine();
 	endp->m_material->setColor(pointColorEnd);
@@ -102,8 +107,8 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 	m_camera->m_frontLayer->addChild(labelTrialInstructions);
 
 	labelHapticDeviceModel = new cLabel(font);
-	camera->m_frontLayer->addChild(labelHapticDeviceModel);
-
+	m_camera->m_frontLayer->addChild(labelHapticDeviceModel);
+}
 	// update position of label
 	//===========================================================================
 	/*!
@@ -112,9 +117,10 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 	*/
 	//===========================================================================
 
-	void cTrial::updateGraphics(int a_width, int a_height)
+	void cSetUp::updateGraphics(int a_width, int a_height)
 	{
-
+		// retrieve information about the current haptic device
+		cHapticDeviceInfo info = hapticDevice->getSpecifications();
 		// create a label to display the haptic device model
 		labelHapticDeviceModel->setText(info.m_modelName);
 
@@ -137,7 +143,7 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 		
 	}
 
-	void cTrial::loadTrial()
+	void cSetUp::loadTrial()
 	{
 		ifstream K1Condition("K1.txt");
 		if (!K1Condition) {
@@ -271,7 +277,7 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 
 }
 
-	void cTrial::initTrial()
+	void cSetUp::initPilot()
 	{
 		// set starting position of cube and its color
 		labelTrialInfo->setText(cStr(trialNumber + 1));
@@ -281,7 +287,7 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 		L1 = L1Cond[trialNumber];
 	}
 
-	void cTrial::updateProtocol()
+	void cSetUp::updateProtocol()
 	{
 		//if (expState < 3)
 		//	cout << "exp: " << expState << " trial: " << trialState << "\r";
@@ -292,13 +298,13 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 			{
 				labelTrialInstructions->setText("Bring the cursor to the start position");
 			}
-			initTrial();
+			initPilot();
 			cout << endl << "starting Trial: " << trialNumber + 1 << endl << endl;
 			expState += 1;
 
 			break;
 		case 2: // wait for subject to reach starting pos
-			if (m_cursor->getLocalPos().x() - downTarget) < 0.01)
+			if (m_cursor->getLocalPos().x() - startPosition.x() < 0.01 && m_cursor->getLocalPos().y() - startPosition.y() < 0.01)
 				expState += 1;
 			break;
 		case 3: // wait for subject to reach stay at starting pos for a random time between 100-200 milliseconds
@@ -312,7 +318,7 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 			{
 				cout << "now: " << logClock.getCurrentTimeSeconds() << " t0: " << time0 << " wait: " << waittime << "\r";
 			}
-			if (fabs(m_ODEBody1->getLocalPos().z() - downTarget) < 0.005)
+			if (m_cursor->getLocalPos().x() - startPosition.x() < 0.005 && m_cursor->getLocalPos().y() - startPosition.y() < 0.005)
 			{
 				cout << "start logging" << endl << endl;
 				expState += 1; //start trial
@@ -325,81 +331,71 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 		case 4: // start the trial + trial running
 			//cout << "------" << endl;
 
-				labelTrialInstructions->setText("GO");
-			if (liftingNumber > 4 && trialState != 3) // show the button for next trial
+			labelTrialInstructions->setText("GO");
+			if (trialState != 3) // show the button for next trial
 			{
 				cout << 100 << endl << endl;
-				if (kVisual == 3)
+				/*if (kVisual == 3)
 				{
-					box->setShowEnabled(true);
-					box2->setShowEnabled(true);
-				}
+				box->setShowEnabled(true);
+				box2->setShowEnabled(true);
+				}*/
 				//expState += 1;
 				trialState = 3;
-				box->m_material->setBlueNavy();
-				m_ODEBody1->m_material->setBlueNavy();
-				box->m_material->setBlueNavy();
-				m_ODEBody1->m_material->setBlueNavy();
+
 			}
-			else
+			/*else
 				if (m_ODEBody1->getLocalPos().z() < boxSize / 2 + 0.0003 && trialState != 3)
 				{
-					expState = 1;
-					//loggingThread->stop();
-					//delete &loggingThread;
-					loggingRunning = false;
-					appendToFile = true;
-					cout << "stop logging" << endl;
-					labelTrialInstructions->setText("Cube Slipped\n Start over");
-					//copy the data file and call it bad at the end;
-				}
-				else if (gap < boxSize / 5 && trialState != 3)
-				{
-					expState = 1;
-					//loggingThread->stop();
-					//delete &loggingThread;
-					loggingRunning = false;
-					appendToFile = true;
-					cout << "stop logging" << endl;
-					labelTrialInstructions->setText("Cube Broke\n Start over");
-					//copy the data file and call it bad at the end;
-				}
+				expState = 1;
+				//loggingThread->stop();
+				//delete &loggingThread;
+				loggingRunning = false;
+				appendToFile = true;
+				cout << "stop logging" << endl;
+				labelTrialInstructions->setText("Cube Slipped\n Start over");
+				//copy the data file and call it bad at the end;
+				}*/
 			switch (trialState)
 			{
 			case 1: //midlift
-				if (m_ODEBody1->getLocalPos().z() > upTarget)
+				if (m_cursor->getLocalPos().x() > startPosition.x() && m_cursor->getLocalPos().y() > startPosition.y())
 					trialState += 1;
 				break;
 			case 2:
 			{
-				if (m_ODEBody1->getLocalPos().z() < downTarget)
+				if (m_cursor->getLocalPos().x() < endPosition.x() && m_cursor->getLocalPos().y() < endPosition.y())
 				{
 					trialState -= 1;
-					liftingNumber += 1;
-					labelTrialInstructions->setText(cStr(liftingNumber));
-					cout << endl << "lift: " << liftingNumber << endl;
+					//liftingNumber += 1;
+					//labelTrialInstructions->setText(cStr(liftingNumber));
+					//cout << endl << "lift: " << liftingNumber << endl;
 				}
 				break;
 			}
+			/*case 3:
+			{
+			if (m_ODEBody1->getLocalPos().z() < boxSize / 2 + 0.0003)
+			expState += 1;
+			labelTrialInstructions->setText("Let go of the Cube");
+			break;
+			}
+			}
+			break;*/
 			case 3:
 			{
-				if (m_ODEBody1->getLocalPos().z() < boxSize / 2 + 0.0003)
-					expState += 1;
-				labelTrialInstructions->setText("Let go of the Cube");
+				trialNumber += 1;
+				expState = 1;
+				loggingRunning = false;
+				appendToFile = false;
 				break;
 			}
 			}
-			break;
-		case 5:
-			trialNumber += 1;
-			expState = 1;
-			loggingRunning = false;
-			appendToFile = false;
-			break;
 		}
+
 	}
 
-	void cTrial::updateLogging(void)
+	void cSetUp::updateLogging(void)
 	{
 		string filename;
 		char trialString[3];
@@ -418,9 +414,7 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 				<< "finger_goal_x\t" << "finger_goal_y\t" << "finger_goal_z\t"
 				<< "thumb_proxy_x\t" << "thumb_proxy_y\t" << "thumb_proxy_z\t"
 				<< "thumb_goal_x\t" << "thumb_goal_y\t" << "thumb_goal_z\t"
-				<< "cube_x\t" << "cube_y\t" << "cube_z\t"
-				<< "force_x\t" << "force_y\t" << "force_z\t" << "force_grip\t"
-				<< "lift_number\t" << "kSpring\t" << "kHandle\t" << "kBoundary\t" << "kVisual" << endl;
+				<< "K1\t" << "K2\t" << "L1\t" << endl;
 			logClock.reset();
 			logClock.start();
 		}
@@ -435,14 +429,13 @@ cSetUp::cSetUp(const std::string a_resourceRoot, std::shared_ptr<cGenericHapticD
 			} while ((time - oldtime) < (1 / fs));
 			oldtime = time;
 			trialFile << std::fixed << time << "\t"
-				<< m_tool0->m_hapticPointFinger->m_sphereProxy->getLocalPos().x() << "\t" << m_tool0->m_hapticPointFinger->m_sphereProxy->getLocalPos().y() << "\t" << m_tool0->m_hapticPointFinger->m_sphereProxy->getLocalPos().z() << "\t"
-				<< m_tool0->m_hapticPointFinger->m_sphereGoal->getLocalPos().x() << "\t" << m_tool0->m_hapticPointFinger->m_sphereGoal->getLocalPos().y() << "\t" << m_tool0->m_hapticPointFinger->m_sphereGoal->getLocalPos().z() << "\t"
-				<< m_tool0->m_hapticPointThumb->m_sphereProxy->getLocalPos().x() << "\t" << m_tool0->m_hapticPointThumb->m_sphereProxy->getLocalPos().y() << "\t" << m_tool0->m_hapticPointThumb->m_sphereProxy->getLocalPos().z() << "\t"
-				<< m_tool0->m_hapticPointThumb->m_sphereGoal->getLocalPos().x() << "\t" << m_tool0->m_hapticPointThumb->m_sphereGoal->getLocalPos().y() << "\t" << m_tool0->m_hapticPointThumb->m_sphereGoal->getLocalPos().z() << "\t"
-				<< m_ODEBody1->getLocalPos().x() << "\t" << m_ODEBody1->getLocalPos().y() << "\t" << m_ODEBody1->getLocalPos().z() << "\t"
-				<< m_tool0->getDeviceGlobalForce().x() << "\t" << m_tool0->getDeviceGlobalForce().y() << "\t" << m_tool0->getDeviceGlobalForce().z() << "\t" << m_tool0->getGripperForce() << "\t"
-				<< liftingNumber << "\t" << kSpring << "\t" << kHandle << "\t" << kBoundary << "\t" << kVisual << endl;
+				<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+				<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+				<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+				<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+				<< K1 << "\t" << K2 << "\t" << L1 << "\t" << endl;
 		}
+
 		trialFile.close();
 	}
 

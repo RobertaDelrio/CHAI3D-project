@@ -16,7 +16,7 @@
 using namespace chai3d;
 using namespace std;
 //-----------------------------------------------------.
--------------------------
+
 
 //------------------------------------------------------------------------------
 // GENERAL SETTINGS
@@ -130,11 +130,11 @@ int main(int argc, char* argv[])
 	cout << "Keyboard Options:" << endl << endl;
 	cout << "[f] - Enable/Disable full screen mode" << endl;
 	cout << "[m] - Enable/Disable vertical mirroring" << endl;
-	out << "[Insert] - Increase Stiffness Lev 1 [K1]" << endl;
+	cout << "[Insert] - Increase Stiffness Lev 1 [K1]" << endl;
 	cout << "[Delete] - Decrease Stiffness Lev 1 [K1]" << endl;
 	cout << "[P_UP] - Increase Stiffness Lev 2 [K2]"<< endl;
 	cout << "[P_DN] - Decrease Stiffness Lev 2 [K2]" << endl;
-	out << "[Home] - Increase Lev 1 width" << endl;
+	cout << "[Home] - Increase Lev 1 width" << endl;
 	cout << "[End] - Decrease Lev 1 width" << endl;
 	cout << "[c] - Clear tissue " << endl;
 	cout << "[q] - Exit application" << endl;
@@ -240,23 +240,23 @@ int main(int argc, char* argv[])
 	// EXPERIMENT
 	//--------------------------------------------------------------------------
 	 
-	m_setUP = new cSetUp(resourceRoot, hapticDevice);
+	m_setUp = new cSetUp(resourceRoot, hapticDevice);
 
 	cout << "Please enter Subject's Name:" << endl;
-	cin >> m_SetUp->subjectName;
+	cin >> m_setUp->subjectName;
 	cout << endl << endl;
 	cout << "Please enter number of Trial:" << endl;
-	cin >> m_SetUp->trialNumber;
-	m_SetUp->trialNumber -= 1;
+	cin >> m_setUp->trialNumber;
+	m_setUp->trialNumber -= 1;
 
 	cout << endl << endl;
 	
 
 	// set stereo mode
-	m_SetUp->m_camera->setStereoMode(stereoMode);
+	m_setUp->m_camera->setStereoMode(stereoMode);
 
 	// initialize demo 1
-	initPilot();
+	m_setUp->initPilot();
 
 	//-----------------------------------------------------------------------
 	// START SIMULATION
@@ -297,7 +297,7 @@ int main(int argc, char* argv[])
 		// process events
 		glfwPollEvents();
 		// signal frequency counter
-		m_SetUp->freqCounterGraphics.signal(1);
+		m_setUp->freqCounterGraphics.signal(1);
 	}
 
 	// close window
@@ -316,8 +316,7 @@ int main(int argc, char* argv[])
 
 void initPilot()
 {
-
-	//  m_SetUp->init();
+	 //m_setUp->init();
 }
 
 //---------------------------------------------------------------------------
@@ -392,28 +391,28 @@ void keyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, 
 
 	if ((a_key == GLFW_KEY_INSERT))
 	{
-		m_setUp->K1 += deltaK1;
+		m_setUp->K1 += m_setUp->deltaK1;
 	}
 	if ((a_key == GLFW_KEY_DELETE))
 	{
-		m_setUp->K1 -= deltaK1;
+		m_setUp->K1 -= m_setUp->deltaK1;
 	}
 	if ((a_key == GLFW_KEY_PAGE_UP))
 	{
-		m_setUp->K2 += deltaK2;
+		m_setUp->K2 += m_setUp->deltaK2;
 	}
 	if ((a_key == GLFW_KEY_PAGE_DOWN))
 	{
-		m_setUp->K2 -= deltaK2;
+		m_setUp->K2 -= m_setUp->deltaK2;
 	}
 
 	if ((a_key == GLFW_KEY_HOME))
 	{
-		m_setUp->L1 += deltaL1;
+		m_setUp->L1 += m_setUp->deltaL1;
 	}
 	if ((a_key == GLFW_KEY_END))
 	{
-		m_setUp->L1 -= deltaL1;
+		m_setUp->L1 -= m_setUp->deltaL1;
 	}
 
 	// option c - clear canvas

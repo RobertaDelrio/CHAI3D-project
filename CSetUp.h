@@ -7,11 +7,12 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <iomanip>  
 //#include "TeleLiftingExperiment.cpp"
 
 using namespace chai3d;
 
-class cTrial
+class cSetUp
 {
 	//-----------------------------------------------------------------------
 	// CONSTRUCTOR & DESTRUCTOR:
@@ -32,13 +33,13 @@ public:
 public:
 
 	//! Initialize to demo
-	virtual void initTrial();
+	virtual void initPilot();
 	//! Update haptics
 	virtual void updateHaptics();
 	//! update protocol
 	virtual void updateProtocol();
 	//! update logging
-	void updateLogging(void);
+	virtual void updateLogging(void);
 	//! Update graphics
 	virtual void updateGraphics(int a_width, int a_height);
 	//!
@@ -56,7 +57,7 @@ public:
 	cCamera* m_camera;
 
 	// a light source to illuminate the objects in the world
-	cDirectionalLight *light;
+	cDirectionalLight* m_light;
 
 	// a font for rendering text
 	cFontPtr font;
@@ -91,13 +92,18 @@ public:
 	cLabel* labelHaptics;
 	cLabel* labelTrialInfo;
 	cLabel* labelTrialInstructions;
+
 	// a label to display the haptic device model
 	cLabel* labelHapticDeviceModel;
 
 	// haptic related stuff
+	// a pointer to the current haptic device
+	cGenericHapticDevicePtr hapticDevice;
+
 	
 	bool loggingRunning = false;
-
+	// a pointer to the current haptic device
+	
 	/*--------------------------------------------------------------------*/
 	/* EXPERIMENT RELATED STUFF */
 
@@ -108,14 +114,15 @@ public:
 	double lev = 0;
 	double deltaK1 = 1;
 	double deltaK2 = 1;
-	double deltaL1 = 0.01;s
+	double deltaL1 = 0.01;
 
 	// arrays for experiment properties from files
 	// loaded in loadTrial()
 	int K1Cond[500];
 	int K2Cond[500];
 	int L1Cond[500];
-	
+	cVector3d startPosition;
+	cVector3d endPosition;
 
 	// properties of current trial
 	// setup of trial in updateProtocol()
