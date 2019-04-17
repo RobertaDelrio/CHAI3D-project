@@ -14,7 +14,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 // convert to resource path
 #define RESOURCE_PATH(p)    (char*)((a_resourceRoot+string(p)).c_str())
-
+//cStereoMode stereoMode = C_STEREO_DISABLED;
 
 //===========================================================================
 /*!
@@ -33,10 +33,11 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	//m_cursorRadius = 0.0025;
 
 	// create world
-	m_world = new cWorld();;
+	m_world = new cWorld();
 
 	// set background color
-	m_world->m_backgroundColor.setBlack();
+	m_world->m_backgroundColor.setWhite();
+
 
 	// create camera
 	m_camera = new cCamera(m_world);
@@ -49,7 +50,15 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 
 	// set the near and far clipping planes of the camera
 	m_camera->setClippingPlanes(0.01, 10.0);
+	// set stereo mode
+	//m_camera->setStereoMode(stereoMode);
 
+	// set stereo eye separation and focal length (applies only if stereo is enabled)
+	m_camera->setStereoEyeSeparation(0.01);
+	m_camera->setStereoFocalLength(0.5);
+
+	// set vertical mirrored display mode
+	//m_camera->setMirrorVertical(mirroredDisplay);
 	// create a directional light source
 	m_light = new cDirectionalLight(m_world);
 
@@ -63,7 +72,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	m_light->setDir(-1.0, 0.0, 0.0);
 
 	// create a sphere (cursor) to represent the haptic device
-	m_cursor = new cShapeSphere(0.005);
+	m_cursor = new cShapeSphere(0.5);
 
 	// insert cursor inside world
 	start = new cShapeSphere(0.02);
@@ -71,7 +80,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 
 	m_world->addChild(start);
 	m_world->addChild(endp);
-
+	m_world->addChild(m_cursor);
 	start->setLocalPos(-0.7, -0.05, 0.0);
 	endp->setLocalPos(-0.7, 0.3, 0.0);
 
@@ -86,7 +95,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	pointColorStart.setRedCrimson();
 	start->m_material->setColor(pointColorStart);
 
-	m_world->addChild(m_cursor);
+	
 	// create a font
 	font = NEW_CFONTCALIBRI20();
 	// create a label to display the haptic and graphic rate of the simulation
@@ -120,9 +129,9 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	void cSetUp::updateGraphics(int a_width, int a_height)
 	{
 		// retrieve information about the current haptic device
-		cHapticDeviceInfo info = hapticDevice->getSpecifications();
+		//cHapticDeviceInfo info = hapticDevice->getSpecifications();
 		// create a label to display the haptic device model
-		labelHapticDeviceModel->setText(info.m_modelName);
+		//labelHapticDeviceModel->setText(info.m_modelName);
 
 		// update haptic and graphic rate data
 		labelTrialInstructions->setLocalPos((int)(0.4 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
@@ -185,21 +194,23 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 		cout << "Trial Loaded" << endl << endl;
 	}
 
-	void cSetUp::updateHaptics()
+	void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	{
 		// read position 
 		cVector3d position;
 		//cVector3d positionk = position;
-		hapticDevice->getPosition(position);
+		//position = m_cursor->getGlobalPos();
+
+		a_hapticDevice->getPosition(position);
 
 		// read orientation 
 		cMatrix3d rotation;
-		hapticDevice->getRotation(rotation);
-
+		a_hapticDevice->getRotation(rotation);
+		/*
 		// read user-switch status (button 0)
 		bool button = false;
 		hapticDevice->getUserSwitch(0, button);
-
+		*/
 
 		/////////////////////////////////////////////////////////////////////
 		// UPDATE 3D CURSOR MODEL
@@ -273,8 +284,8 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 		cout << "X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << "Force:" << force.z() << "Kp:" << Kp << "\r";
 
 		// send computed force, torque, and gripper force to haptic device
-		hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
-
+		a_hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
+		
 }
 
 	void cSetUp::initPilot()
@@ -334,13 +345,6 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 			labelTrialInstructions->setText("GO");
 			if (trialState != 3) // show the button for next trial
 			{
-				cout << 100 << endl << endl;
-				/*if (kVisual == 3)
-				{
-				box->setShowEnabled(true);
-				box2->setShowEnabled(true);
-				}*/
-				//expState += 1;
 				trialState = 3;
 
 			}

@@ -437,6 +437,8 @@ void close(void)
 	delete loggingThread;
 	delete m_setUp;
 	delete handler;
+	// close haptic device
+	hapticDevice->close();
 
 }
 
@@ -456,7 +458,7 @@ void updateGraphics(void)
 
 //-------------------------------------------------------------------------
 
-void updateHaptics(void)
+void updateHaptics()
 {
 	// simulation in now running
 	simulationRunning = true;
@@ -465,7 +467,7 @@ void updateHaptics(void)
 	// main haptic simulation loop
 	while (simulationRunning)
 	{
-		m_setUp->updateHaptics();
+		m_setUp->updateHaptics(hapticDevice);
 	}
 
 	// exit haptics thread

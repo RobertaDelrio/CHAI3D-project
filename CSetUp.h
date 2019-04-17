@@ -35,7 +35,7 @@ public:
 	//! Initialize to demo
 	virtual void initPilot();
 	//! Update haptics
-	virtual void updateHaptics();
+	virtual void updateHaptics(std::shared_ptr<cGenericHapticDevice> a_hapticDevice);
 	//! update protocol
 	virtual void updateProtocol();
 	//! update logging
@@ -93,12 +93,13 @@ public:
 	cLabel* labelTrialInfo;
 	cLabel* labelTrialInstructions;
 
-	// a label to display the haptic device model
-	cLabel* labelHapticDeviceModel;
-
+	// a haptic device handler
+	//cHapticDeviceHandler* handler;
 	// haptic related stuff
 	// a pointer to the current haptic device
-	cGenericHapticDevicePtr hapticDevice;
+	//cGenericHapticDevicePtr hapticDevice;
+	// a label to display the haptic device model
+	cLabel* labelHapticDeviceModel;
 
 	
 	bool loggingRunning = false;
@@ -127,13 +128,6 @@ public:
 	// properties of current trial
 	// setup of trial in updateProtocol()
 	
-	double kBoundary;
-	double upTarget = 0.12;
-	double downTarget = 0.06;
-	cMesh* m_downTarget;
-	cMesh* m_upTarget;
-	cMesh* m_boundary;
-
 	// data logging properties
 	cThread* loggingThread;
 	double fs = 2000; // sampling frequency [Hz]
@@ -144,7 +138,7 @@ public:
 	int expState = 1;
 	int trialState = 1;
 	int trialNumber = 115;
-	int liftingNumber;
+	
 	/*--------------------------------------------------------------------*/
 };
 
