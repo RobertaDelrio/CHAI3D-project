@@ -17,7 +17,6 @@ using namespace chai3d;
 using namespace std;
 //-----------------------------------------------------.
 
-
 //------------------------------------------------------------------------------
 // GENERAL SETTINGS
 //------------------------------------------------------------------------------
@@ -36,6 +35,7 @@ bool fullscreen = false;
 
 // mirrored display
 bool mirroredDisplay = false;
+
 
 //------------------------------------------------------------------------------
 // DECLARED VARIABLES 
@@ -75,6 +75,7 @@ int height = 0;
 // swap interval for the display context (vertical synchronization)
 int swapInterval = 1;
 
+
 //------------------------------------------------------------------------------
 // EXPERIMENT SET UP 
 //------------------------------------------------------------------------------
@@ -107,7 +108,6 @@ void updateProtocol(void);
 
 // this function closes the application
 void close(void);
-
 //==============================================================================
 /*
 TEMPLATE:    pilot.cpp
@@ -115,6 +115,7 @@ TEMPLATE:    pilot.cpp
 Pilot experiment for surgical cut simulation
 */
 //==============================================================================
+
 
 int main(int argc, char* argv[])
 {
@@ -132,17 +133,17 @@ int main(int argc, char* argv[])
 	cout << "[m] - Enable/Disable vertical mirroring" << endl;
 	cout << "[Insert] - Increase Stiffness Lev 1 [K1]" << endl;
 	cout << "[Delete] - Decrease Stiffness Lev 1 [K1]" << endl;
-	cout << "[P_UP] - Increase Stiffness Lev 2 [K2]"<< endl;
+	cout << "[P_UP] - Increase Stiffness Lev 2 [K2]" << endl;
 	cout << "[P_DN] - Decrease Stiffness Lev 2 [K2]" << endl;
 	cout << "[Home] - Increase Lev 1 width" << endl;
 	cout << "[End] - Decrease Lev 1 width" << endl;
-	cout << "[c] - Clear tissue " << endl;
 	cout << "[q] - Exit application" << endl;
 	cout << "-----------------------------------" << endl;
 	cout << endl << endl;
 
 	// parse first arg to try and locate resources
 	string resourceRoot = string(argv[0]).substr(0, string(argv[0]).find_last_of("/\\") + 1);
+
 	//--------------------------------------------------------------------------
 	// OPENGL - WINDOW DISPLAY
 	//--------------------------------------------------------------------------
@@ -217,7 +218,6 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-
 	//--------------------------------------------------------------------------
 	// HAPTIC DEVICE
 	//--------------------------------------------------------------------------
@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
 	//--------------------------------------------------------------------------
 	// EXPERIMENT
 	//--------------------------------------------------------------------------
-	 
+
 	m_setUp = new cSetUp(resourceRoot, hapticDevice);
 
 	cout << "Please enter Subject's Name:" << endl;
@@ -250,7 +250,7 @@ int main(int argc, char* argv[])
 	m_setUp->trialNumber -= 1;
 
 	cout << endl << endl;
-	
+
 
 	// set stereo mode
 	m_setUp->m_camera->setStereoMode(stereoMode);
@@ -316,10 +316,9 @@ int main(int argc, char* argv[])
 
 void initPilot()
 {
-	 //m_setUp->init();
+	//m_setUp->init();
 }
 
-//---------------------------------------------------------------------------
 
 void windowSizeCallback(GLFWwindow* a_window, int a_width, int a_height)
 {
@@ -415,12 +414,6 @@ void keyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, 
 		m_setUp->L1 -= m_setUp->deltaL1;
 	}
 
-	// option c - clear canvas
-	if (a_key == GLFW_KEY_C)
-	{
-		// update console message
-		cout << "> Canvas has been erased.            \r";
-	}
 }
 
 void close(void)
@@ -489,3 +482,7 @@ void updateProtocol(void)
 	while (simulationRunning)
 		m_setUp->updateProtocol();
 }
+
+
+
+

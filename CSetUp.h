@@ -99,12 +99,12 @@ public:
 	// a pointer to the current haptic device
 	//cGenericHapticDevicePtr hapticDevice;
 	// a label to display the haptic device model
-	cLabel* labelHapticDeviceModel;
+	//cLabel* labelHapticDeviceModel;
 
-	
+
 	bool loggingRunning = false;
 	// a pointer to the current haptic device
-	
+
 	/*--------------------------------------------------------------------*/
 	/* EXPERIMENT RELATED STUFF */
 
@@ -117,17 +117,18 @@ public:
 	double deltaK2 = 1;
 	double deltaL1 = 0.01;
 
+	cVector3d startPosition;
+	cVector3d endPosition;
+
 	// arrays for experiment properties from files
 	// loaded in loadTrial()
 	int K1Cond[500];
 	int K2Cond[500];
 	int L1Cond[500];
-	cVector3d startPosition;
-	cVector3d endPosition;
-
+	
 	// properties of current trial
 	// setup of trial in updateProtocol()
-	
+
 	// data logging properties
 	cThread* loggingThread;
 	double fs = 2000; // sampling frequency [Hz]
@@ -138,7 +139,7 @@ public:
 	int expState = 1;
 	int trialState = 1;
 	int trialNumber = 115;
-	
+
 	/*--------------------------------------------------------------------*/
 };
 
