@@ -148,7 +148,7 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	labelHaptics->setText("LEV:" + cStr(lev, 0) + "K1 " +
 		cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2));
 	// update position of label
-	labelHaptics->setLocalPos((int)(0.1 * (a_width - labelHaptics->getWidth())), 0.9*a_height - labelHaptics->getHeight());
+	labelHaptics->setLocalPos((int)(0.1 * (a_width - labelHaptics->getWidth())), 0.9 *a_height - labelHaptics->getHeight());
 
 	// update shadow maps (if any)
 	m_world->updateShadowMaps(false, m_mirroredDisplay);
@@ -191,7 +191,7 @@ void cSetUp::loadTrial()
 	}
 	i = 0;
 	while (L1Condition >> L1Cond[i]) {
-		cout << L1Cond[i] << " ";
+		cout << setprecision(2) << L1Cond[i] << " ";
 		i += 1;
 	}
 	cout << endl;
@@ -202,7 +202,7 @@ void cSetUp::loadTrial()
 
 void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 {
-	freqCounterHaptics.signal(1);
+	
 	// read position 
 	cVector3d position;
 	//cVector3d positionk = position;
@@ -268,14 +268,14 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	if (position.z() < 0.0 && position.z() > -L1) {
 		// compute linear force
 		Kp = K1* position.z(); // [N/m]
-		printf("LEV1");
+		printf("LEV1 ");
 		lev = 1;
 	}
 
 	else if (position.z() < -L1) {
 		// compute linear force
 		Kp = -L1*(K1 + K2) + K2*(position.z() + L1); // [N/m]
-		printf("LEV2");
+		printf("LEV2 ");
 		lev = 2;
 
 	}
@@ -288,7 +288,8 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 
 	double forceField = -Kp;
 	force.z(forceField);
-	cout << "X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << "Force:" << force.z() << "Kp:" << Kp << "\r";
+	cout << "  K1:" << K1 << "  K2:" << K2 << "  L1:" << L1 << "    X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << " Force:" << force.z() << "Kp:" << Kp << "\r";
+
 
 	// send computed force, torque, and gripper force to haptic device
 	a_hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
@@ -298,6 +299,8 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	// reset clock
 	simClock.reset();
 	simClock.start();
+
+	freqCounterHaptics.signal(1);
 
 }
 
@@ -313,6 +316,7 @@ void cSetUp::initPilot()
 
 void cSetUp::updateProtocol()
 {
+	/*
 	//if (expState < 3)
 	//	cout << "exp: " << expState << " trial: " << trialState << "\r";
 	switch (expState)
@@ -328,7 +332,7 @@ void cSetUp::updateProtocol()
 
 		break;
 	case 2: // wait for subject to reach starting pos
-		if (m_cursor->getLocalPos().x() - startPosition.x() < 0.01 && m_cursor->getLocalPos().y() - startPosition.y() < 0.01)
+		if (fabs(m_cursor->getLocalPos().x() - startPosition.x()) < 0.01 && fabs(m_cursor->getLocalPos().y() - startPosition.y()) < 0.01)
 			expState += 1;
 		break;
 	case 3: // wait for subject to reach stay at starting pos for a random time between 100-200 milliseconds
@@ -374,6 +378,7 @@ void cSetUp::updateProtocol()
 		labelTrialInstructions->setText("Cube Slipped\n Start over");
 		//copy the data file and call it bad at the end;
 		}*/
+	/*
 		switch (trialState)
 		{
 		case 1: //midlift
@@ -400,7 +405,7 @@ void cSetUp::updateProtocol()
 		}
 		}
 		break;*/
-		case 3:
+		/*case 3:
 		{
 			trialNumber += 1;
 			expState = 1;
@@ -410,7 +415,7 @@ void cSetUp::updateProtocol()
 		}
 		}
 	}
-
+	*/
 }
 
 void cSetUp::updateLogging(void)

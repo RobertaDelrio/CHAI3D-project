@@ -122,9 +122,9 @@ public:
 
 	// arrays for experiment properties from files
 	// loaded in loadTrial()
-	int K1Cond[500];
-	int K2Cond[500];
-	int L1Cond[500];
+	double K1Cond[500];
+	double K2Cond[500];
+	double L1Cond[500];
 	
 	// properties of current trial
 	// setup of trial in updateProtocol()
