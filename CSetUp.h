@@ -133,7 +133,7 @@ public:
 	cThread* loggingThread;
 	double fs = 2000; // sampling frequency [Hz]
 	std::string subjectName = "";
-	bool appendToFile;
+	bool appendToFile = false;
 
 	// experiment statemachine
 	int expState = 1;

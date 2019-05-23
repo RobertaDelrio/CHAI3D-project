@@ -41,7 +41,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	m_world->addChild(m_camera);
 
 	// position and orient the camera
-	m_camera->set(cVector3d(0.5, 0.0, 0.0),    // camera position (eye)
+	m_camera->set(cVector3d(0.7, 0.0, 0.0),    // camera position (eye)
 		cVector3d(0.0, 0.0, 0.0),    // look at position (target)
 		cVector3d(0.0, 0.0, 1.0));   // direction of the (up) vector
 
@@ -71,18 +71,18 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	m_light->setDir(-1.0, 0.0, 0.0);
 
 	// create a sphere (cursor) to represent the haptic device
-	m_cursor = new cShapeSphere(0.005);
+	m_cursor = new cShapeSphere(0.008);
 	m_world->addChild(m_cursor);
 
 	// insert cursor inside world
-	start = new cShapeSphere(0.02);
-	endp = new cShapeSphere(0.02);
+	start = new cShapeSphere(0.01);
+	endp = new cShapeSphere(0.01);
 
 	m_world->addChild(start);
 	m_world->addChild(endp);
 	
-	start->setLocalPos(-0.7, -0.05, 0.0);
-	endp->setLocalPos(-0.7, 0.3, 0.0);
+	start->setLocalPos(0, -0.05, 0.0);
+	endp->setLocalPos(0, 0.05, 0.0);
 
 	cVector3d startPosition;
 	//start->setLocalPos(startPosition);
@@ -101,10 +101,10 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	// create a label to display the haptic and graphic rate of the simulation
 	labelRates = new cLabel(font);
 	m_camera->m_frontLayer->addChild(labelRates);
-	labelRates->setShowEnabled(false);
+	labelRates->setShowEnabled(true);
 
 	labelHaptics = new cLabel(font);
-	labelHaptics->setShowEnabled(false);
+	labelHaptics->setShowEnabled(true);
 	m_camera->m_frontLayer->addChild(labelHaptics);
 
 	labelTrialInfo = new cLabel(font);
@@ -134,7 +134,7 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	//labelHapticDeviceModel->setText(info.m_modelName);
 
 	// update haptic and graphic rate data
-	labelTrialInstructions->setLocalPos((int)(0.4 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
+	//labelTrialInstructions->setLocalPos((int)(0.4 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
 	// update position of label
 	labelTrialInfo->setLocalPos((int)(0.1 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
 
@@ -145,8 +145,7 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
-	labelHaptics->setText("LEV:" + cStr(lev, 0) + "K1 " +
-		cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2));
+	labelHaptics->setText("LEV: " + cStr(lev, 0) + " K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2));
 	// update position of label
 	labelHaptics->setLocalPos((int)(0.1 * (a_width - labelHaptics->getWidth())), 0.9 *a_height - labelHaptics->getHeight());
 
@@ -202,7 +201,8 @@ void cSetUp::loadTrial()
 
 void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 {
-	
+	m_world->computeGlobalPositions(true);
+
 	// read position 
 	cVector3d position;
 	//cVector3d positionk = position;
@@ -228,7 +228,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	m_cursor->setLocalRot(rotation);
 
 	//Change pov of the camera
-	m_cursor->setLocalPos(position.z(), position.y(), position.x());
+	m_cursor->setLocalPos(0.02, position.y(), position.x());
 
 	/////////////////////////////////////////////////////////////////////
 	// COMPUTE FORCES
@@ -268,14 +268,14 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	if (position.z() < 0.0 && position.z() > -L1) {
 		// compute linear force
 		Kp = K1* position.z(); // [N/m]
-		printf("LEV1 ");
+		//printf("LEV1 \n");
 		lev = 1;
 	}
 
 	else if (position.z() < -L1) {
 		// compute linear force
 		Kp = -L1*(K1 + K2) + K2*(position.z() + L1); // [N/m]
-		printf("LEV2 ");
+		//printf("LEV2 \n");
 		lev = 2;
 
 	}
@@ -283,12 +283,15 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 
 		// compute linear force
 		Kp = -0; // [N/m]
+		//printf("LEV0 \n");
 		lev = 0;
 	}
 
 	double forceField = -Kp;
 	force.z(forceField);
-	cout << "  K1:" << K1 << "  K2:" << K2 << "  L1:" << L1 << "    X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << " Force:" << force.z() << "Kp:" << Kp << "\r";
+
+	//cout << "    X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << "\r";
+		//" Force:" << force.z() << "Kp:" << Kp << "\r";
 
 
 	// send computed force, torque, and gripper force to haptic device
@@ -316,107 +319,65 @@ void cSetUp::initPilot()
 
 void cSetUp::updateProtocol()
 {
-	/*
-	//if (expState < 3)
-	//	cout << "exp: " << expState << " trial: " << trialState << "\r";
-	switch (expState)
-	{
-	case 1: // Setup Next Trial
-		if (!appendToFile)
-		{
-			labelTrialInstructions->setText("Bring the cursor to the start position");
-		}
+	/*cVector3d position = m_cursor->getLocalPos();
+	cVector3d startPosition = start->getLocalPos();
+	cVector3d endPosition = endp->getLocalPos();*/
+	m_world->computeGlobalPositions(true);
+
+	cVector3d position = m_cursor->getGlobalPos();
+	cVector3d startPosition = start->getGlobalPos();
+	cVector3d endPosition = endp->getGlobalPos();
+
+	switch (expState) {
+	case 1:{
+		printf("GO TO THE START POSITION\n");
 		initPilot();
-		cout << endl << "starting Trial: " << trialNumber + 1 << endl << endl;
 		expState += 1;
 
 		break;
-	case 2: // wait for subject to reach starting pos
-		if (fabs(m_cursor->getLocalPos().x() - startPosition.x()) < 0.01 && fabs(m_cursor->getLocalPos().y() - startPosition.y()) < 0.01)
-			expState += 1;
-		break;
-	case 3: // wait for subject to reach stay at starting pos for a random time between 100-200 milliseconds
-	{
-		//cout << "------" << endl;
-		labelTrialInstructions->setText("Get Ready");
+	}
+	case 2:{
+		double ab_x = fabs(position.z() - startPosition.x());
+		double ab_y = fabs(position.y() - startPosition.y());
+		cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y << "\r";
 
-		double waittime = (rand() % 100 + 101) / 100;
-		double time0 = logClock.getCurrentTimeSeconds();
-		while ((logClock.getCurrentTimeSeconds() - time0) < waittime)
+		if (fabs(position.z() - startPosition.x()) < 0.005 && fabs(position.y() - startPosition.y()) < 0.005)
 		{
-			cout << "now: " << logClock.getCurrentTimeSeconds() << " t0: " << time0 << " wait: " << waittime << "\r";
-		}
-		if (m_cursor->getLocalPos().x() - startPosition.x() < 0.005 && m_cursor->getLocalPos().y() - startPosition.y() < 0.005)
-		{
-			cout << "start logging" << endl << endl;
+			printf("START REACHED\n");
 			loggingRunning = true;
-			expState += 1; //start trial
-			trialState = 1;
+			expState += 1;
 		}
-		else
-			expState -= 1; // go back to case 2 waiting...
+		//else
+			//expState -= 1;
+
 		break;
 	}
-	case 4: // start the trial + trial running
-		//cout << "------" << endl;
-
-		labelTrialInstructions->setText("GO");
-		if (trialState != 3) // show the button for next trial
+	case 3:{
+		if (fabs(position.z() - endPosition.x()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
 		{
-			trialState = 3;
-
-		}
-		/*else
-		if (m_ODEBody1->getLocalPos().z() < boxSize / 2 + 0.0003 && trialState != 3)
-		{
-		expState = 1;
-		//loggingThread->stop();
-		//delete &loggingThread;
-		loggingRunning = false;
-		appendToFile = true;
-		cout << "stop logging" << endl;
-		labelTrialInstructions->setText("Cube Slipped\n Start over");
-		//copy the data file and call it bad at the end;
-		}*/
-	/*
-		switch (trialState)
-		{
-		case 1: //midlift
-			if (m_cursor->getLocalPos().x() > startPosition.x() && m_cursor->getLocalPos().y() > startPosition.y())
-				trialState += 1;
-			break;
-		case 2:
-		{
-			if (m_cursor->getLocalPos().x() < endPosition.x() && m_cursor->getLocalPos().y() < endPosition.y())
-			{
-				trialState -= 1;
-				//liftingNumber += 1;
-				//labelTrialInstructions->setText(cStr(liftingNumber));
-				//cout << endl << "lift: " << liftingNumber << endl;
-			}
-			break;
-		}
-		/*case 3:
-		{
-		if (m_ODEBody1->getLocalPos().z() < boxSize / 2 + 0.0003)
-		expState += 1;
-		labelTrialInstructions->setText("Let go of the Cube");
-		break;
-		}
-		}
-		break;*/
-		/*case 3:
-		{
-			trialNumber += 1;
-			expState = 1;
+			printf("GOAL REACHED\n");
 			loggingRunning = false;
-			appendToFile = false;
-			break;
+			//appendToFile = true;
+			expState += 1;
 		}
-		}
+		break;
+
 	}
-	*/
+	case 4:{
+		printf("END\n");
+		loggingRunning = false;
+		//appendToFile = false;
+		expState = 1;
+		trialNumber++;
+		break;
+		break;
+	}
+
+
+	}
 }
+	
+
 
 void cSetUp::updateLogging(void)
 {
@@ -433,10 +394,7 @@ void cSetUp::updateLogging(void)
 	{
 		trialFile.open(filename);
 		trialFile << "Time\t"
-			<< "finger_proxy_x\t" << "finger_proxy_x\t" << "finger_proxy_x\t"
-			<< "finger_goal_x\t" << "finger_goal_y\t" << "finger_goal_z\t"
-			<< "thumb_proxy_x\t" << "thumb_proxy_y\t" << "thumb_proxy_z\t"
-			<< "thumb_goal_x\t" << "thumb_goal_y\t" << "thumb_goal_z\t"
+			<< "cursor_x\t" << "cursor_y\t" << "cursor_z\t"
 			<< "K1\t" << "K2\t" << "L1\t" << endl;
 		logClock.reset();
 		logClock.start();
@@ -452,10 +410,7 @@ void cSetUp::updateLogging(void)
 		} while ((time - oldtime) < (1 / fs));
 		oldtime = time;
 		trialFile << std::fixed << time << "\t"
-			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
-			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
-			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
-			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+			<< position.x()<< "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
 			<< K1 << "\t" << K2 << "\t" << L1 << "\t" << endl;
 	}
 

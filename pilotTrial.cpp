@@ -242,16 +242,16 @@ int main(int argc, char* argv[])
 
 	m_setUp = new cSetUp(resourceRoot, hapticDevice);
 
-	cout << "Please enter Subject's Name:" << endl;
+	/*cout << "Please enter Subject's Name:" << endl;
 	cin >> m_setUp->subjectName;
 	cout << endl << endl;
 	cout << "Please enter number of Trial:" << endl;
 	cin >> m_setUp->trialNumber;
 	m_setUp->trialNumber -= 1;
 
-	cout << endl << endl;
-
-
+	cout << endl << endl;*/
+	m_setUp->trialNumber = 1;
+	m_setUp->subjectName = "a";
 	// set stereo mode
 	m_setUp->m_camera->setStereoMode(stereoMode);
 
@@ -469,11 +469,11 @@ void updateHaptics()
 
 void updateLogging(void)
 {
-	while (simulationRunning)
+	while (!simulationFinished)
 		// This is to periodically log data (time, position, force, state) on a buffer
 		if (m_setUp->loggingRunning)
 		{
-			cout << "start logging" << endl;
+	//		cout << "start logging" << endl;
 			m_setUp->updateLogging();
 		}
 }
