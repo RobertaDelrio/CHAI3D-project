@@ -410,7 +410,7 @@ void cSetUp::updateLogging(void)
 		} while ((time - oldtime) < (1 / fs));
 		oldtime = time;
 		trialFile << std::fixed << time << "\t"
-			<< position.x()<< "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
+			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
 			<< K1 << "\t" << K2 << "\t" << L1 << "\t" << endl;
 	}
 
