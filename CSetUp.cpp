@@ -228,7 +228,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	m_cursor->setLocalRot(rotation);
 
 	//Change pov of the camera
-	m_cursor->setLocalPos(0.02, position.y(), position.x());
+	m_cursor->setLocalPos(position.z(), position.y(), position.x());
 
 	/////////////////////////////////////////////////////////////////////
 	// COMPUTE FORCES
