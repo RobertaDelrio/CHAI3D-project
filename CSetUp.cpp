@@ -89,10 +89,10 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	cVector3d endPosition;
 	//endp->setLocalPos(endPosition);
 
-	pointColorEnd.setBlueAquamarine();
+	pointColorEnd.setGrayGainsboro();
 	endp->m_material->setColor(pointColorEnd);
 
-	pointColorStart.setRedCrimson();
+	pointColorStart.setGrayGainsboro();
 	start->m_material->setColor(pointColorStart);
 
 
@@ -334,6 +334,11 @@ void cSetUp::updateProtocol()
 		initPilot();
 		expState += 1;
 
+		
+		//endp->m_material->setColor(pointColorEnd);
+
+		start->m_material->setColor(pointColorStart);
+
 		break;
 	}
 	case 2:{
@@ -344,11 +349,16 @@ void cSetUp::updateProtocol()
 		if (fabs(position.z() - startPosition.x()) < 0.005 && fabs(position.y() - startPosition.y()) < 0.005)
 		{
 			printf("START REACHED\n");
+			start->m_material->setGreenMediumAquamarine();
+			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
 			expState += 1;
 		}
-		//else
-			//expState -= 1;
+		
+		else
+		{
+			start->m_material->setColor(pointColorStart);
+		}
 
 		break;
 	}
@@ -357,9 +367,11 @@ void cSetUp::updateProtocol()
 		{
 			printf("GOAL REACHED\n");
 			loggingRunning = false;
+			endp->m_material->setRedCrimson();
 			//appendToFile = true;
 			expState += 1;
 		}
+		
 		break;
 
 	}
@@ -369,7 +381,6 @@ void cSetUp::updateProtocol()
 		//appendToFile = false;
 		expState = 1;
 		trialNumber++;
-		break;
 		break;
 	}
 

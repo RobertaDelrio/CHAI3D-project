@@ -138,7 +138,7 @@ public:
 	// experiment statemachine
 	int expState = 1;
 	int trialState = 1;
-	int trialNumber = 115;
+	int trialNumber = 0;
 
 	/*--------------------------------------------------------------------*/
 };
