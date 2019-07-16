@@ -28,7 +28,7 @@ C_STEREO_ACTIVE:              Active stereo for OpenGL NVDIA QUADRO cards
 C_STEREO_PASSIVE_LEFT_RIGHT:  Passive stereo where L/R images are rendered next to each other
 C_STEREO_PASSIVE_TOP_BOTTOM:  Passive stereo where L/R images are rendered above each other
 */
-cStereoMode stereoMode = C_STEREO_DISABLED;
+cStereoMode stereoMode = C_STEREO_PASSIVE_LEFT_RIGHT;
 
 // fullscreen mode
 bool fullscreen = false;
