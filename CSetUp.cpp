@@ -81,8 +81,8 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	m_world->addChild(start);
 	m_world->addChild(endp);
 	
-	start->setLocalPos(0, -0.05, 0.0);
-	endp->setLocalPos(0, 0.05, 0.0);
+	start->setLocalPos(-0.07, -0.05, 0.0);
+	endp->setLocalPos(-0.07, 0.05, 0.0);
 
 	cVector3d startPosition;
 	//start->setLocalPos(startPosition);
@@ -239,10 +239,18 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	double gripperForce = 0.0;
 	double Kp = 0;
 
+	// read linear velocity 
+	cVector3d linearVelocity;
+	a_hapticDevice->getLinearVelocity(linearVelocity);
+
+	// read angular velocity
+	cVector3d angularVelocity;
+	a_hapticDevice->getAngularVelocity(angularVelocity);
+
 	/////////////////////////////////////////////////////////////////////
 	// APPLY FORCES
 	/////////////////////////////////////////////////////////////////////
-	/*
+	
 	if (position.z() < 0.0 && position.z() > -L1) {
 	// compute linear force
 	Kp = K1* position.z(); // [N/m]
@@ -262,9 +270,9 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	// compute linear force
 	Kp = -0; // [N/m]
 	lev = 0;
-	}*/
+	}
 	//SMOOTH TRANSITION
-
+	/*
 	if (position.z() < 0.0 && position.z() > -L1) {
 		// compute linear force
 		Kp = K1* position.z(); // [N/m]
@@ -286,14 +294,15 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 		//printf("LEV0 \n");
 		lev = 0;
 	}
-
+	*/
 	double forceField = -Kp;
 	force.z(forceField);
+	Fz = force.z();
 
-	//cout << "    X:" << setprecision(2) << position.x() << " Y:" << setprecision(2) << position.y() << " Z:" << setprecision(2) << position.z() << "\r";
-		//" Force:" << force.z() << "Kp:" << Kp << "\r";
+	cout << " Force:" << force.z() << "   Kp:" << Kp << "\r";
 
-
+	// update global variable for graphic display update
+	hapticDeviceVelocity = linearVelocity;
 	// send computed force, torque, and gripper force to haptic device
 	a_hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
 	double time = simClock.getCurrentTimeSeconds();
@@ -342,9 +351,9 @@ void cSetUp::updateProtocol()
 		break;
 	}
 	case 2:{
-		double ab_x = fabs(position.z() - startPosition.x());
-		double ab_y = fabs(position.y() - startPosition.y());
-		cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y << "\r";
+		//double ab_x = fabs(position.z() - startPosition.x());
+		//double ab_y = fabs(position.y() - startPosition.y());
+		//cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y << "\r";
 
 		if (fabs(position.z() - startPosition.x()) < 0.005 && fabs(position.y() - startPosition.y()) < 0.005)
 		{
@@ -406,7 +415,7 @@ void cSetUp::updateLogging(void)
 		trialFile.open(filename);
 		trialFile << "Time\t"
 			<< "cursor_x\t" << "cursor_y\t" << "cursor_z\t"
-			<< "K1\t" << "K2\t" << "L1\t" << endl;
+			<< "K1\t" << "K2\t" << "L1\t" << "Fz\t" << "v_x\t" << "v_y\t" << "v_z\t" << endl;
 		logClock.reset();
 		logClock.start();
 	}
@@ -422,7 +431,7 @@ void cSetUp::updateLogging(void)
 		oldtime = time;
 		trialFile << std::fixed << time << "\t"
 			<< m_cursor->getLocalPos().x() << "\t" << m_cursor->getLocalPos().y() << "\t" << m_cursor->getLocalPos().z() << "\t"
-			<< K1 << "\t" << K2 << "\t" << L1 << "\t" << endl;
+			<< K1 << "\t" << K2 << "\t" << L1 << "\t" << Fz << "\t" << hapticDeviceVelocity.x() << "\t" << hapticDeviceVelocity.y() << "\t" << hapticDeviceVelocity.z() << "\t" << endl;
 	}
 
 	trialFile.close();

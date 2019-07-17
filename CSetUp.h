@@ -93,6 +93,9 @@ public:
 	cLabel* labelTrialInfo;
 	cLabel* labelTrialInstructions;
 
+	// a global variable to store the velocity [m/s] of the haptic device
+	cVector3d hapticDeviceVelocity;
+
 	// a haptic device handler
 	//cHapticDeviceHandler* handler;
 	// haptic related stuff
@@ -113,6 +116,7 @@ public:
 	double L1 = 0.05;
 	double L2 = 0;
 	double lev = 0;
+	double Fz = 0;
 	double deltaK1 = 1;
 	double deltaK2 = 1;
 	double deltaL1 = 0.01;
