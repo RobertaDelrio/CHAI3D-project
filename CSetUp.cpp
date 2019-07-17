@@ -81,8 +81,9 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	m_world->addChild(start);
 	m_world->addChild(endp);
 	
-	start->setLocalPos(-0.07, -0.05, 0.0);
-	endp->setLocalPos(-0.07, 0.05, 0.0);
+	//TO CHECK: Coordinates of the sphere x is actually z --> Change protocol threshold check
+	start->setLocalPos(0.0, -0.05, 0.0);
+	endp->setLocalPos(0.0, 0.05, 0.0);
 
 	cVector3d startPosition;
 	//start->setLocalPos(startPosition);
@@ -228,7 +229,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	m_cursor->setLocalRot(rotation);
 
 	//Change pov of the camera
-	m_cursor->setLocalPos(position.z(), position.y(), position.x());
+	m_cursor->setLocalPos(position.z(), position.y(), -position.x());
 
 	/////////////////////////////////////////////////////////////////////
 	// COMPUTE FORCES
