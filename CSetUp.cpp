@@ -84,6 +84,8 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	//TO CHECK: Coordinates of the sphere x is actually z --> Change protocol threshold check
 	start->setLocalPos(0.0, -0.05, 0.0);
 	endp->setLocalPos(0.0, 0.05, 0.0);
+	//start->setUseTransparency(true,false);
+	//start->setTransparencyLevel(0.9,false,false,false);
 
 	cVector3d startPosition;
 	//start->setLocalPos(startPosition);
@@ -229,8 +231,8 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	m_cursor->setLocalRot(rotation);
 
 	//Change pov of the camera
+	//m_cursor->setLocalPos(position.z(), position.y(), -position.x());
 	m_cursor->setLocalPos(position.z(), position.y(), -position.x());
-
 	/////////////////////////////////////////////////////////////////////
 	// COMPUTE FORCES
 	/////////////////////////////////////////////////////////////////////
@@ -255,14 +257,14 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	if (position.z() < 0.0 && position.z() > -L1) {
 	// compute linear force
 	Kp = K1* position.z(); // [N/m]
-	printf("LEV1");
+	//printf("LEV1");
 	lev = 1;
 	}
 
 	else if (position.z() < -L1) {
 	// compute linear force
 	Kp = K2*position.z(); // [N/m]
-	printf("LEV2");
+	//printf("LEV2");
 	lev = 2;
 
 	}
@@ -300,7 +302,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	force.z(forceField);
 	Fz = force.z();
 
-	cout << " Force:" << force.z() << "   Kp:" << Kp << "\r";
+	//cout << " Force:" << force.z() << "   Kp:" << Kp << "\r";
 
 	// update global variable for graphic display update
 	hapticDeviceVelocity = linearVelocity;
@@ -352,11 +354,15 @@ void cSetUp::updateProtocol()
 		break;
 	}
 	case 2:{
-		//double ab_x = fabs(position.z() - startPosition.x());
-		//double ab_y = fabs(position.y() - startPosition.y());
-		//cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y << "\r";
 
-		if (fabs(position.z() - startPosition.x()) < 0.005 && fabs(position.y() - startPosition.y()) < 0.005)
+		double ab_x = position.y() - startPosition.y();
+		double ab_y = position.z() - startPosition.z();
+		//double ab_x = position.x();
+		//double ab_y = position.y();
+		double ab_z = position.z();
+		cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y <<"      abs_Z:" << setprecision(2) << ab_z << "\r";
+
+		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005)
 		{
 			printf("START REACHED\n");
 			start->m_material->setGreenMediumAquamarine();
@@ -373,7 +379,7 @@ void cSetUp::updateProtocol()
 		break;
 	}
 	case 3:{
-		if (fabs(position.z() - endPosition.x()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
+		if (fabs(position.z() - endPosition.z()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
 		{
 			printf("GOAL REACHED\n");
 			loggingRunning = false;
