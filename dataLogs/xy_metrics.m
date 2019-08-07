@@ -32,7 +32,7 @@ for i=1:length(ntrial)
     %% Compute error in the first segment and second segment
     
     figure,plot3(y_cursor_1seg,z_cursor_1seg,x_cursor_1seg);
-    axis equal
+    %axis equal
     %compute error for every trial of a K2 on the first segment
     e_1seg(i-last) = max(x_cursor_1seg) - L1(i,1);
     %compute error for every trial of a K2 on the second segment
