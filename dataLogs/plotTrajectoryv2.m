@@ -1,8 +1,8 @@
 %% Load variables file
 clear all , close all;
-ntrial = 1:3;
-filename = 'Prova';
-n = 5;
+ntrial = 1:100;
+filename = 'Roberta';
+n = 10;
 m = 5;
 %%
 L = [];

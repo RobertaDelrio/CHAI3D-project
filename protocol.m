@@ -1,11 +1,11 @@
 
 
 %Definition of K1 & experiment numbers
-array = [70,120]
+array = [80,110]
 [~,N] = size(array)
 m = 5;
 n = 10;
-p = 18;
+p = 15;
 % Randomization of the blocks 
 index = randperm(N,N);
 new = array(index);
@@ -18,7 +18,7 @@ fclose(fileK1);
 
 f = [];
 for i = 1:N
-    gap = (1/p)*new(i)
+    gap = (p/100)*new(i)
     val = new(i);
     for j= 1:m
         val = val-gap;
@@ -38,7 +38,7 @@ fclose(fileK2);
 
 %% Creation of the L1.txt file
 %l = randi([25 55],N*m*n,1)/1000;
-jump = [0.25, 0.30, 0.35, 0.4, 0.45, 0.47, 0.5, 0.55, 0.57, 0.6];
+jump = [0.025, 0.030, 0.035, 0.04, 0.045, 0.047, 0.05, 0.055, 0.057, 0.06];
 fileL1= fopen('L1.txt','w');
 for i = 1:m*N
     fileL1= fopen('L1.txt','a');
