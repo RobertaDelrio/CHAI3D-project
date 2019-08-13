@@ -111,11 +111,11 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	labelHaptics->setShowEnabled(true);
 	m_camera->m_frontLayer->addChild(labelHaptics);
 
-	labelTrialInfo = new cLabel(font1);
+	labelTrialInfo = new cLabel(font2);
 	labelTrialInfo->m_fontColor = cColorf(1.0, 0.0, 0.0);
 	m_camera->m_frontLayer->addChild(labelTrialInfo);
 
-	labelTrialInstructions = new cLabel(font1);
+	labelTrialInstructions = new cLabel(font2);
 	labelTrialInstructions->m_fontColor = cColorf(0.0, 0.0, 1.0);
 	m_camera->m_frontLayer->addChild(labelTrialInstructions);
 
@@ -138,18 +138,18 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	//labelHapticDeviceModel->setText(info.m_modelName);
 
 	// update haptic and graphic rate data
-	//labelTrialInstructions->setLocalPos((int)(0.4 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
+	labelTrialInstructions->setLocalPos((int)(0.5 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
+	
 	// update position of label
-	labelTrialInfo->setLocalPos((int)(0.1 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
+	labelTrialInfo->setLocalPos((int)(0.5 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
 
 	// update haptic and graphic rate data
-	labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " +
-		cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
+	//labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " + cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
 	// update position of label
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
-	labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2)  + "\n              LEV: " + cStr(lev, 0));
+	labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 3)  + "\n              LEV: " + cStr(lev, 0));
 	// update position of label
 	labelHaptics->setLocalPos((int)(0.5 * (a_width - labelHaptics->getWidth())), 0.75 *a_height - labelHaptics->getHeight());
 
@@ -358,7 +358,7 @@ void cSetUp::updateProtocol()
 	cVector3d endPosition = endp->getGlobalPos();
 
 	switch (expState) {
-	case 1:{
+	case 1: {
 		printf("GO TO THE START POSITION\n");
 		initPilot();
 		expState += 1;
@@ -370,7 +370,7 @@ void cSetUp::updateProtocol()
 
 		break;
 	}
-	case 2:{
+	case 2: {
 
 		double ab_x = position.y() - startPosition.y();
 		double ab_y = position.z() - startPosition.z();
@@ -381,13 +381,14 @@ void cSetUp::updateProtocol()
 
 		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005 && lev == 0)
 		{
+			labelTrialInstructions->setText("    ");
 			printf("START REACHED\n");
 			start->m_material->setGreenMediumAquamarine();
 			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
 			expState += 1;
 		}
-		
+
 		else
 		{
 			start->m_material->setColor(pointColorStart);
@@ -395,7 +396,7 @@ void cSetUp::updateProtocol()
 
 		break;
 	}
-	case 3:{
+	case 3: {
 		if (fabs(position.z() - endPosition.z()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
 		{
 			printf("GOAL REACHED\n");
@@ -403,12 +404,35 @@ void cSetUp::updateProtocol()
 			endp->m_material->setRedCrimson();
 			//appendToFile = true;
 			expState += 1;
+			
 		}
-		
+
 		break;
 
 	}
-	case 4:{
+	case 4: {
+		if (lev == 0)
+		{
+			
+			endp->m_material->setColor(pointColorEnd);
+
+			if (trialNumber != 100){
+				if (trialNumber % 10 == 0) {
+									labelTrialInstructions->setText("PAUSE");
+								}
+				expState += 1;
+
+				
+
+			} 
+			
+				
+		}
+
+		break;
+
+	}
+	case 5: {
 		printf("END\n");
 		loggingRunning = false;
 		//appendToFile = false;
@@ -416,8 +440,6 @@ void cSetUp::updateProtocol()
 		trialNumber++;
 		break;
 	}
-
-
 	}
 }
 	
@@ -426,7 +448,7 @@ void cSetUp::updateProtocol()
 void cSetUp::updateLogging(void)
 {
 	string filename;
-	char trialString[3];
+	char trialString[4];
 	double time;
 	itoa(trialNumber + 1, trialString, 10);
 	filename = +"dataLogs\\" + subjectName + "_trial_" + trialString + ".txt";

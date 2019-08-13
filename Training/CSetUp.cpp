@@ -122,7 +122,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	// create a level to display velocity data
 	levelVelocity = new cLevel();
 	m_camera->m_frontLayer->addChild(levelVelocity);
-	levelVelocity->setLocalPos(400, 300);
+	levelVelocity->setLocalPos(600, 300);
 	levelVelocity->setRange(0.0, 0.3);
 	levelVelocity->setWidth(80);
 	levelVelocity->setNumIncrements(30);
@@ -153,13 +153,12 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	labelTrialInfo->setLocalPos((int)(0.1 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
 
 	// update haptic and graphic rate data
-	labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " +
-		cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
+	//labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " + cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
 	// update position of label
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
-	labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2)  + "\n              LEV: " + cStr(lev, 0));
+	labelHaptics->setText("LEV: " + cStr(lev, 0)+ "          SCORE: "+ cStr(double(score), 0)+"%");
 	// update position of label
 	labelHaptics->setLocalPos((int)(0.5 * (a_width - labelHaptics->getWidth())), 0.75 *a_height - labelHaptics->getHeight());
 
@@ -402,6 +401,7 @@ void cSetUp::updateProtocol()
 		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005 && lev == 0)
 		{
 			printf("START REACHED\n");
+			score = 0;
 			start->m_material->setGreenMediumAquamarine();
 			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
@@ -424,11 +424,37 @@ void cSetUp::updateProtocol()
 			//appendToFile = true;
 			expState += 1;
 		}
+		else {
+		
+			if (m_cursor->getLocalPos().x() < min) {
+
+				min = m_cursor->getLocalPos().x();
+			}
+			
+		}
 		
 		break;
 
 	}
-	case 4:{
+	case 4: {
+		if (lev == 0)
+		{
+			
+			endp->m_material->setColor(pointColorEnd);
+			error = min + (0.71*L1);
+			errop = (error * 100) / double(0.71*L1);
+			score = 100 + errop;
+			if (error > 0 || score < 0) {
+				score = 0;
+			}
+			//appendToFile = true;
+			expState += 1;
+		}
+
+		break;
+
+	}
+	case 5: {
 		printf("END\n");
 		loggingRunning = false;
 		//appendToFile = false;
