@@ -149,7 +149,7 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
-	labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 3)  + "\n              LEV: " + cStr(lev, 0));
+	//labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 3)  + "\n              LEV: " + cStr(lev, 0));
 	// update position of label
 	labelHaptics->setLocalPos((int)(0.5 * (a_width - labelHaptics->getWidth())), 0.75 *a_height - labelHaptics->getHeight());
 
@@ -266,14 +266,14 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	// APPLY FORCES
 	/////////////////////////////////////////////////////////////////////
 
-	if (p.z() < 0.0 && p.z() > -0.71*L1) {
+	if (p.z() < 0.0 && p.z() > -L1) {
 		// compute linear force
 		Kp = K1* p.z(); // [N/m]
 							   //printf("LEV1");
 		lev = 1;
 	}
 
-	else if (p.z() < -0.71*L1) {
+	else if (p.z() < -L1) {
 		// compute linear force
 		Kp = K2*p.z(); // [N/m]
 							  //printf("LEV2");
@@ -319,7 +319,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	forceRot.rotateAboutGlobalAxisDeg(y, 45);
 	forceGlob = forceRot.getCol0();
 
-	//cout << " Force:" << force.z() << "   Kp:" << Kp << "\r";
+	cout << " Trial:" << trialNumber << "\r";
 
 	// update global variable for graphic display update
 	hapticDeviceVelocity = linearVelocity;
@@ -339,7 +339,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 void cSetUp::initPilot()
 {
 	// set starting position of cube and its color
-	labelTrialInfo->setText("Trial: " + cStr(trialNumber + 1));
+	//labelTrialInfo->setText("Trial: " + cStr(trialNumber + 1));
 	
 	K1 = K1Cond[trialNumber];
 	K2 = K2Cond[trialNumber];
@@ -359,7 +359,7 @@ void cSetUp::updateProtocol()
 
 	switch (expState) {
 	case 1: {
-		printf("GO TO THE START POSITION\n");
+		//printf("GO TO THE START POSITION\n");
 		initPilot();
 		expState += 1;
 
@@ -382,7 +382,7 @@ void cSetUp::updateProtocol()
 		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005 && lev == 0)
 		{
 			labelTrialInstructions->setText("    ");
-			printf("START REACHED\n");
+			//printf("START REACHED\n");
 			start->m_material->setGreenMediumAquamarine();
 			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
@@ -397,9 +397,9 @@ void cSetUp::updateProtocol()
 		break;
 	}
 	case 3: {
-		if (fabs(position.z() - endPosition.z()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
+		if (fabs(position.z() - endPosition.z()) < 0.005 && fabs(position.y() - endPosition.y()) < 0.005)
 		{
-			printf("GOAL REACHED\n");
+			//printf("GOAL REACHED\n");
 			loggingRunning = false;
 			endp->m_material->setRedCrimson();
 			//appendToFile = true;
@@ -421,7 +421,6 @@ void cSetUp::updateProtocol()
 									labelTrialInstructions->setText("PAUSE");
 								}
 				expState += 1;
-
 				
 
 			} 
@@ -433,7 +432,7 @@ void cSetUp::updateProtocol()
 
 	}
 	case 5: {
-		printf("END\n");
+		//printf("END\n");
 		loggingRunning = false;
 		//appendToFile = false;
 		expState = 1;

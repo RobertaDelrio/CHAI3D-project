@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
 
 	cout << endl << endl;*/
 	m_setUp->trialNumber = 0;
-	m_setUp->subjectName = "Roberta";
+	m_setUp->subjectName = "Asya";
 	// set stereo mode
 	m_setUp->m_camera->setStereoMode(stereoMode);
 

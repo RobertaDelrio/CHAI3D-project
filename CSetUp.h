@@ -60,8 +60,8 @@ public:
 	cDirectionalLight* m_light;
 
 	// a font for rendering text
-	cFontPtr font;
-
+	cFontPtr font1;
+	cFontPtr font2;
 	// a sphere for the cursor
 	cShapeSphere* m_cursor;
 
@@ -95,7 +95,7 @@ public:
 
 	// a global variable to store the velocity [m/s] of the haptic device
 	cVector3d hapticDeviceVelocity;
-
+	//cMatrix3d* robi;
 	// a haptic device handler
 	//cHapticDeviceHandler* handler;
 	// haptic related stuff

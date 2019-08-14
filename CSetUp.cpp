@@ -100,21 +100,22 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 
 
 	// create a font
-	font = NEW_CFONTCALIBRI20();
+	font1 = NEW_CFONTCALIBRI20();
+	font2 = NEW_CFONTCALIBRI40();
 	// create a label to display the haptic and graphic rate of the simulation
-	labelRates = new cLabel(font);
+	labelRates = new cLabel(font1);
 	m_camera->m_frontLayer->addChild(labelRates);
 	labelRates->setShowEnabled(true);
 
-	labelHaptics = new cLabel(font);
+	labelHaptics = new cLabel(font2);
 	labelHaptics->setShowEnabled(true);
 	m_camera->m_frontLayer->addChild(labelHaptics);
 
-	labelTrialInfo = new cLabel(font);
+	labelTrialInfo = new cLabel(font2);
 	labelTrialInfo->m_fontColor = cColorf(1.0, 0.0, 0.0);
 	m_camera->m_frontLayer->addChild(labelTrialInfo);
 
-	labelTrialInstructions = new cLabel(font);
+	labelTrialInstructions = new cLabel(font2);
 	labelTrialInstructions->m_fontColor = cColorf(0.0, 0.0, 1.0);
 	m_camera->m_frontLayer->addChild(labelTrialInstructions);
 
@@ -137,20 +138,20 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	//labelHapticDeviceModel->setText(info.m_modelName);
 
 	// update haptic and graphic rate data
-	//labelTrialInstructions->setLocalPos((int)(0.4 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
+	labelTrialInstructions->setLocalPos((int)(0.5 * (a_width - labelTrialInfo->getWidth())), 0.8*a_height - labelTrialInfo->getHeight());
+	
 	// update position of label
-	labelTrialInfo->setLocalPos((int)(0.1 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
+	labelTrialInfo->setLocalPos((int)(0.5 * (a_width - labelTrialInfo->getWidth())), 0.9*a_height - labelTrialInfo->getHeight());
 
 	// update haptic and graphic rate data
-	labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " +
-		cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
+	//labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " + cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
 	// update position of label
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
-	labelHaptics->setText("LEV: " + cStr(lev, 0) + " K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 2));
+	//labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 3)  + "\n              LEV: " + cStr(lev, 0));
 	// update position of label
-	labelHaptics->setLocalPos((int)(0.1 * (a_width - labelHaptics->getWidth())), 0.9 *a_height - labelHaptics->getHeight());
+	labelHaptics->setLocalPos((int)(0.5 * (a_width - labelHaptics->getWidth())), 0.75 *a_height - labelHaptics->getHeight());
 
 	// update shadow maps (if any)
 	m_world->updateShadowMaps(false, m_mirroredDisplay);
@@ -233,12 +234,23 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	//Change pov of the camera
 	//m_cursor->setLocalPos(position.z(), position.y(), -position.x());
 	m_cursor->setLocalPos(position.z(), position.y(), -position.x());
+	m_cursor->setLocalPos(0.71*position.z()+0.71*position.x(), position.y(), 0.71*position.z() -0.71*position.x());
 	/////////////////////////////////////////////////////////////////////
 	// COMPUTE FORCES
 	/////////////////////////////////////////////////////////////////////
 
 	cVector3d force(0, 0, 0);
+	cVector3d forceGlob(0, 0, 0);
 	cVector3d torque(0, 0, 0);
+	cVector3d y(0, 1, 0);
+	cVector3d p(0, 0, 0);
+	cMatrix3d posRot;
+	cMatrix3d forceRot;
+	posRot.set(0.0);
+	posRot.setCol0(position);
+	posRot.rotateAboutGlobalAxisDeg(y, -45);
+	p = posRot.getCol0();
+
 	double gripperForce = 0.0;
 	double Kp = 0;
 
@@ -253,18 +265,40 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	/////////////////////////////////////////////////////////////////////
 	// APPLY FORCES
 	/////////////////////////////////////////////////////////////////////
-	
+
+	if (p.z() < 0.0 && p.z() > -L1) {
+		// compute linear force
+		Kp = K1* p.z(); // [N/m]
+							   //printf("LEV1");
+		lev = 1;
+	}
+
+	else if (p.z() < -L1) {
+		// compute linear force
+		Kp = K2*p.z(); // [N/m]
+							  //printf("LEV2");
+		lev = 2;
+
+	}
+	else {
+
+		// compute linear force
+		Kp = -0; // [N/m]
+		lev = 0;
+	}
+	//SMOOTH TRANSITION
+	/*
 	if (position.z() < 0.0 && position.z() > -L1) {
 	// compute linear force
 	Kp = K1* position.z(); // [N/m]
-	//printf("LEV1");
+	//printf("LEV1 \n");
 	lev = 1;
 	}
 
 	else if (position.z() < -L1) {
 	// compute linear force
-	Kp = K2*position.z(); // [N/m]
-	//printf("LEV2");
+	Kp = -L1*(K1 + K2) + K2*(position.z() + L1); // [N/m]
+	//printf("LEV2 \n");
 	lev = 2;
 
 	}
@@ -272,42 +306,25 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 
 	// compute linear force
 	Kp = -0; // [N/m]
+	//printf("LEV0 \n");
 	lev = 0;
-	}
-	//SMOOTH TRANSITION
-	/*
-	if (position.z() < 0.0 && position.z() > -L1) {
-		// compute linear force
-		Kp = K1* position.z(); // [N/m]
-		//printf("LEV1 \n");
-		lev = 1;
-	}
-
-	else if (position.z() < -L1) {
-		// compute linear force
-		Kp = -L1*(K1 + K2) + K2*(position.z() + L1); // [N/m]
-		//printf("LEV2 \n");
-		lev = 2;
-
-	}
-	else{
-
-		// compute linear force
-		Kp = -0; // [N/m]
-		//printf("LEV0 \n");
-		lev = 0;
 	}
 	*/
 	double forceField = -Kp;
 	force.z(forceField);
-	Fz = force.z();
 
-	//cout << " Force:" << force.z() << "   Kp:" << Kp << "\r";
+	
+	forceRot.set(0.0);
+	forceRot.setCol0(force);
+	forceRot.rotateAboutGlobalAxisDeg(y, 45);
+	forceGlob = forceRot.getCol0();
+
+	cout << " Trial:" << trialNumber << "\r";
 
 	// update global variable for graphic display update
 	hapticDeviceVelocity = linearVelocity;
 	// send computed force, torque, and gripper force to haptic device
-	a_hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
+	a_hapticDevice->setForceAndTorqueAndGripperForce(forceGlob, torque, gripperForce);
 	double time = simClock.getCurrentTimeSeconds();
 	double nextSimInterval = cClamp(time, 0.0001, 0.001);
 
@@ -322,8 +339,8 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 void cSetUp::initPilot()
 {
 	// set starting position of cube and its color
-	labelTrialInfo->setText(cStr(trialNumber + 1));
-
+	//labelTrialInfo->setText("Trial: " + cStr(trialNumber + 1));
+	
 	K1 = K1Cond[trialNumber];
 	K2 = K2Cond[trialNumber];
 	L1 = L1Cond[trialNumber];
@@ -341,8 +358,8 @@ void cSetUp::updateProtocol()
 	cVector3d endPosition = endp->getGlobalPos();
 
 	switch (expState) {
-	case 1:{
-		printf("GO TO THE START POSITION\n");
+	case 1: {
+		//printf("GO TO THE START POSITION\n");
 		initPilot();
 		expState += 1;
 
@@ -353,24 +370,25 @@ void cSetUp::updateProtocol()
 
 		break;
 	}
-	case 2:{
+	case 2: {
 
 		double ab_x = position.y() - startPosition.y();
 		double ab_y = position.z() - startPosition.z();
 		//double ab_x = position.x();
 		//double ab_y = position.y();
 		double ab_z = position.z();
-		cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y <<"      abs_Z:" << setprecision(2) << ab_z << "\r";
+		//cout << "    abs X:" << setprecision(2) << ab_x << "    abs Y:" << setprecision(2) << ab_y <<"      abs_Z:" << setprecision(2) << ab_z << "\r";
 
-		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005)
+		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005 && lev == 0)
 		{
-			printf("START REACHED\n");
+			labelTrialInstructions->setText("    ");
+			//printf("START REACHED\n");
 			start->m_material->setGreenMediumAquamarine();
 			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
 			expState += 1;
 		}
-		
+
 		else
 		{
 			start->m_material->setColor(pointColorStart);
@@ -378,29 +396,49 @@ void cSetUp::updateProtocol()
 
 		break;
 	}
-	case 3:{
-		if (fabs(position.z() - endPosition.z()) < 0.002 && fabs(position.y() - endPosition.y()) < 0.002)
+	case 3: {
+		if (fabs(position.z() - endPosition.z()) < 0.005 && fabs(position.y() - endPosition.y()) < 0.005)
 		{
-			printf("GOAL REACHED\n");
+			//printf("GOAL REACHED\n");
 			loggingRunning = false;
 			endp->m_material->setRedCrimson();
 			//appendToFile = true;
 			expState += 1;
+			
 		}
-		
+
 		break;
 
 	}
-	case 4:{
-		printf("END\n");
+	case 4: {
+		if (lev == 0)
+		{
+			
+			endp->m_material->setColor(pointColorEnd);
+
+			if (trialNumber != 100){
+				if (trialNumber % 10 == 0) {
+									labelTrialInstructions->setText("PAUSE");
+								}
+				expState += 1;
+				
+
+			} 
+			
+				
+		}
+
+		break;
+
+	}
+	case 5: {
+		//printf("END\n");
 		loggingRunning = false;
 		//appendToFile = false;
 		expState = 1;
 		trialNumber++;
 		break;
 	}
-
-
 	}
 }
 	
@@ -409,7 +447,7 @@ void cSetUp::updateProtocol()
 void cSetUp::updateLogging(void)
 {
 	string filename;
-	char trialString[3];
+	char trialString[4];
 	double time;
 	itoa(trialNumber + 1, trialString, 10);
 	filename = +"dataLogs\\" + subjectName + "_trial_" + trialString + ".txt";

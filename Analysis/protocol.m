@@ -1,7 +1,7 @@
 
 
 %Definition of K1 & experiment numbers
-array = [80,110]
+array = [70,110]
 [~,N] = size(array)
 m = 5;
 n = 10;
