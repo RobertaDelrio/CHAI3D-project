@@ -1,12 +1,16 @@
 %% Load variables file
 clear all , close all;
 ntrial = 1:100;
-filename = 'Roberta';
+filenames = {'Zack'};
+numsub = length(filenames);
 n = 10;
 m = 5;
 %%
-last = 0;
-j = 1;
+
+for k=1:numsub
+    filename=filenames{k}
+    last = 0;
+    j = 1;
 for i=1:length(ntrial)
     trial=ntrial(i);
     data=importdata([filename '_trial_' num2str(trial) '.txt']);
@@ -63,12 +67,21 @@ for i=1:length(ntrial)
     
     
 end
-
 K2_val_u = unique(K2_val, 'stable');
 [~,n] = size(K2_val_u);
-K2_val_u1 = K2_val_u(1:n/2);
-K2_val_u2 = K2_val_u((n/2)+1:n);
-%Save on a txt file the following data for every subject
+
+%TO FIX
+if K1(1,1) == 70
+    
+    K2_val_u1 = K2_val_u(1:n/2);
+    K2_val_u2 = K2_val_u((n/2)+1:n);
+
+else
+    
+end
+    
+    
+%Save on a matrix the following data for every subject
 %name of the subject
 %k2 values for first K1
 %k2 values for second K1
@@ -77,44 +90,48 @@ K2_val_u2 = K2_val_u((n/2)+1:n);
 %Average error first segment for both K1
 %Average error second segment for both K1
 
-f = [filename, 'xz.txt'];
-filesubxz= fopen(f,'w');
-fprintf(filesubxz, '%s\n%d\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n',filename,K2_val_u1,K2_val_u2,MAX_e_1seg(1:n/2),MAX_e_1seg((n/2)+1:n),MAX_e_2seg(1:n/2),MAX_e_2seg((n/2)+1:n),AVG_e_1seg(1:n/2),AVG_e_1seg((n/2)+1:n),AVG_e_2seg(1:n/2),AVG_e_2seg((n/2)+1:n));
-fclose(filesubxz);
-
 %Max error first segment for both K1
-figure,bar(K2_val_u1, MAX_e_1seg(1:n/2));
+figure(1),subplot(1,numsub,k)
+bar(K2_val_u1, MAX_e_1seg(1:n/2));
 title('Max error first segment K1: 70 N/m');
 xlabel('K2 [N/m]');
 ylabel('Error [m]');
-figure,bar(K2_val_u2, MAX_e_1seg((n/2)+1:n));
+figure(2),subplot(1,numsub,k)
+bar(K2_val_u2, MAX_e_1seg((n/2)+1:n));
 title('Max error first segment K1: 110 N/m');
 xlabel('K2[N/m]');
 ylabel('Error [m]');
 %Max error second segment for both K1
-figure,bar(K2_val_u1, MAX_e_2seg(1:n/2));
+figure(3),subplot(1,numsub,k)
+bar(K2_val_u1, MAX_e_2seg(1:n/2));
 title('Max error second segment K1: 70 N/m');
 xlabel('K2 [N/m]');
 ylabel('Error [m]');
-figure,bar(K2_val_u2, MAX_e_2seg((n/2)+1:n));
+figure(4),subplot(1,numsub,k)
+bar(K2_val_u2, MAX_e_2seg((n/2)+1:n));
 title('Max error second segment K1: 110 N/m');
 xlabel('K2[N/m]');
 ylabel('Error [m]');
 %Average error first segment for both K1
-figure,bar(K2_val_u1, AVG_e_1seg(1:n/2));
+figure(5),subplot(1,numsub,k)
+bar(K2_val_u1, AVG_e_1seg(1:n/2));
 title('Mean error first segment K1: 70 N/m');
 xlabel('K2 [N/m]');
 ylabel('Error [m]');
-figure,bar(K2_val_u2, AVG_e_1seg((n/2)+1:n));
+figure(6),subplot(1,numsub,k)
+bar(K2_val_u2, AVG_e_1seg((n/2)+1:n));
 title('Mean error first segment K1: 110 N/m');
 xlabel('K2[N/m]');
 ylabel('Error [m]');
 %Average error second segment for both K1
-figure,bar(K2_val_u1, AVG_e_2seg(1:n/2));
+figure(7),subplot(1,numsub,k)
+bar(K2_val_u1, AVG_e_2seg(1:n/2));
 title('Mean error second segment K1: 70 N/m');
 xlabel('K2 [N/m]');
 ylabel('Error [m]');
-figure,bar(K2_val_u2, AVG_e_2seg((n/2)+1:n));
+figure(8),subplot(1,numsub,k)
+bar(K2_val_u2, AVG_e_2seg((n/2)+1:n));
 title('Mean error second segment K1: 110 N/m');
 xlabel('K2[N/m]');
 ylabel('Error [m]');
+end
