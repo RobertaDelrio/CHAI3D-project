@@ -83,7 +83,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	
 	//TO CHECK: Coordinates of the sphere x is actually z --> Change protocol threshold check
 	start->setLocalPos(0.0, -0.05, 0.0);
-	endp->setLocalPos(0.0, 0.05, 0.0);
+	endp->setLocalPos(0.0, 0.04, 0.0);
 	//start->setUseTransparency(true,false);
 	//start->setTransparencyLevel(0.9,false,false,false);
 
@@ -318,7 +318,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	forceRot.setCol0(force);
 	forceRot.rotateAboutGlobalAxisDeg(y, 45);
 	forceGlob = forceRot.getCol0();
-
+	Fz = force.z();
 	cout << " Trial:" << trialNumber << "\r";
 
 	// update global variable for graphic display update
@@ -356,17 +356,25 @@ void cSetUp::updateProtocol()
 	cVector3d position = m_cursor->getGlobalPos();
 	cVector3d startPosition = start->getGlobalPos();
 	cVector3d endPosition = endp->getGlobalPos();
-
+	
 	switch (expState) {
 	case 1: {
 		//printf("GO TO THE START POSITION\n");
-		initPilot();
-		expState += 1;
+		
+		if (trialNumber == 120) {
+
+			labelTrialInfo->setText("End of Experiment");
+			start->m_material->setColor(pointColorStart);
+			expState = 1;
+		}
+		else {
+
+			initPilot();
+			expState += 1;
+			start->m_material->setColor(pointColorStart);
+		}
 
 		
-		//endp->m_material->setColor(pointColorEnd);
-
-		start->m_material->setColor(pointColorStart);
 
 		break;
 	}
@@ -416,7 +424,7 @@ void cSetUp::updateProtocol()
 			
 			endp->m_material->setColor(pointColorEnd);
 
-			if (trialNumber != 100){
+			if (trialNumber != 120){
 				if (trialNumber % 10 == 0) {
 									labelTrialInstructions->setText("PAUSE");
 								}

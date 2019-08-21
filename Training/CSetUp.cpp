@@ -83,7 +83,7 @@ cSetUp::cSetUp(const string a_resourceRoot, shared_ptr<cGenericHapticDevice> a_h
 	
 	//TO CHECK: Coordinates of the sphere x is actually z --> Change protocol threshold check
 	start->setLocalPos(0.0, -0.05, 0.0);
-	endp->setLocalPos(0.0, 0.05, 0.0);
+	endp->setLocalPos(0.0, 0.04, 0.0);
 	//start->setUseTransparency(true,false);
 	//start->setTransparencyLevel(0.9,false,false,false);
 
@@ -158,7 +158,14 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
 	// update position of label
+	if (trialNumber <= 15) {
+
 	labelHaptics->setText("LEV: " + cStr(lev, 0)+ "          SCORE: "+ cStr(double(score), 0)+"%");
+	}
+	else {
+		labelHaptics->setText("SCORE: " + cStr(double(score), 0) + "%");
+	}
+	
 	// update position of label
 	labelHaptics->setLocalPos((int)(0.5 * (a_width - labelHaptics->getWidth())), 0.75 *a_height - labelHaptics->getHeight());
 
@@ -358,7 +365,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 void cSetUp::initPilot()
 {
 	// set starting position of cube and its color
-	//labelTrialInfo->setText("Trial: " + cStr(trialNumber + 1));
+	
 	
 	K1 = K1Cond[trialNumber];
 	K2 = K2Cond[trialNumber];
@@ -379,8 +386,17 @@ void cSetUp::updateProtocol()
 	switch (expState) {
 	case 1:{
 		//printf("GO TO THE START POSITION\n");
-		initPilot();
-		expState += 1;
+		if (trialNumber == 30){
+
+			labelTrialInfo->setText("End of Training");
+			expState = 1;
+		}
+		else {
+
+			initPilot();
+			expState += 1;
+		}
+		
 
 		
 		//endp->m_material->setColor(pointColorEnd);
@@ -401,7 +417,7 @@ void cSetUp::updateProtocol()
 		if (fabs(position.z() - startPosition.z()) < 0.004 && fabs(position.y() - startPosition.y()) < 0.005 && lev == 0)
 		{
 			//printf("START REACHED\n");
-			score = 0;
+			//score = 0;
 			start->m_material->setGreenMediumAquamarine();
 			endp->m_material->setColor(pointColorEnd);
 			loggingRunning = true;
@@ -441,12 +457,14 @@ void cSetUp::updateProtocol()
 		{
 			
 			endp->m_material->setColor(pointColorEnd);
-			error = min + (L1);
+			error = min + (L1)+0.005;
 			errop = (error * 100) / double(L1);
 			score = 100 + errop;
 			if (error > 0 || score < 0) {
 				score = 0;
 			}
+
+			final_score[trialNumber] = score;
 			//appendToFile = true;
 			expState += 1;
 		}
