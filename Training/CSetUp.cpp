@@ -344,8 +344,9 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	forceRot.setCol0(force);
 	forceRot.rotateAboutGlobalAxisDeg(y, 45);
 	forceGlob = forceRot.getCol0();
-
-	cout << " Trial:" << trialNumber <<  "\r";
+	Fz = force.z();
+	cout << " Trial:" << trialNumber << "      LEV:" << lev << "      K1:" << K1 << "      K2:" << K2 << "      L1:" << L1 << "\r";
+	
 
 	// update global variable for graphic display update
 	hapticDeviceVelocity = linearVelocity;

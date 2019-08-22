@@ -148,6 +148,7 @@ void cSetUp::updateGraphics(int a_width, int a_height)
 	// update position of label
 	labelRates->setLocalPos((int)(0.5 * (a_width - labelRates->getWidth())), 100);
 
+	//labelHaptics->setText("SCORE: " + cStr(double(score), 1) + "%");
 	// update position of label
 	//labelHaptics->setText("K1 " + cStr(K1, 0) + " K2 " + cStr(K2, 0) + " L1 " + cStr(L1, 3)  + "\n              LEV: " + cStr(lev, 0));
 	// update position of label
@@ -319,7 +320,7 @@ void cSetUp::updateHaptics(shared_ptr<cGenericHapticDevice> a_hapticDevice)
 	forceRot.rotateAboutGlobalAxisDeg(y, 45);
 	forceGlob = forceRot.getCol0();
 	Fz = force.z();
-	cout << " Trial:" << trialNumber << "\r";
+	cout << " Trial:" << trialNumber << "      LEV:" << lev << "      K1:" << K1 << "      K2:" << K2 << "      L1:" << L1 << "\r";
 
 	// update global variable for graphic display update
 	hapticDeviceVelocity = linearVelocity;
@@ -414,6 +415,13 @@ void cSetUp::updateProtocol()
 			expState += 1;
 			
 		}
+		else {
+
+			if (m_cursor->getLocalPos().x() < min) {
+
+				min = m_cursor->getLocalPos().x();
+			}
+		}
 
 		break;
 
@@ -428,6 +436,15 @@ void cSetUp::updateProtocol()
 				if (trialNumber % 10 == 0) {
 									labelTrialInstructions->setText("PAUSE");
 								}
+				endp->m_material->setColor(pointColorEnd);
+				error = min + (L1)+0.008;
+				errop = (error * 100) / double(L1);
+				score = 100 + errop;
+				if (error > 0 || score < 0) {
+					score = 0;
+				}
+
+				final_score[trialNumber] = score;
 				expState += 1;
 				
 

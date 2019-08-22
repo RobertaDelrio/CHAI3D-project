@@ -28,7 +28,7 @@ C_STEREO_ACTIVE:              Active stereo for OpenGL NVDIA QUADRO cards
 C_STEREO_PASSIVE_LEFT_RIGHT:  Passive stereo where L/R images are rendered next to each other
 C_STEREO_PASSIVE_TOP_BOTTOM:  Passive stereo where L/R images are rendered above each other
 */
-cStereoMode stereoMode = C_STEREO_DISABLED; //C_STEREO_PASSIVE_LEFT_RIGHT;
+cStereoMode stereoMode =C_STEREO_PASSIVE_LEFT_RIGHT;
 
 // fullscreen mode
 bool fullscreen = false;
@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
 
 	cout << endl << endl;*/
 	m_setUp->trialNumber = 0;
-	m_setUp->subjectName = "Ilana_train";
+	m_setUp->subjectName = "Meitav_train";
 	// set stereo mode
 	m_setUp->m_camera->setStereoMode(stereoMode);
 

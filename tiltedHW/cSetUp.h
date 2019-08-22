@@ -120,6 +120,11 @@ public:
 	double deltaK1 = 1;
 	double deltaK2 = 1;
 	double deltaL1 = 0.01;
+	int score = 0;
+	double error = 0;
+	double errop = 0;
+	double min = 0;
+	int final_score[100] = { 0 };
 
 	cVector3d startPosition;
 	cVector3d endPosition;
