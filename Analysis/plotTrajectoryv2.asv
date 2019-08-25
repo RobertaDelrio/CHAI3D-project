@@ -1,9 +1,9 @@
 %% Load variables file
 clear all , close all;
-ntrial = 1:120;
-filenames =  {'dataLogs/S1/Experiment/data/Inbali','',''};
+ntrial = 1:100;
+filenames =  {'dataLogs/S1/Experiment/data/Inbali',};
 n = 10;
-m = 6;
+m = 5;
 %%
 for k=1:length(filenames)
     filename=filenames{k};
