@@ -1,9 +1,10 @@
 %% Load variables file
 clear all , close all;
 ntrial = 1:120;
-filenames = {'dataLogs/S1/Experiment/data/Inbali','dataLogs/S2/Experiment/data/Eilav',...
+filenames = {'dataLogs/S1/Experiment/data/Inbali','dataLogs/S2/Experiment/data/Eilav','dataLogs/S3/Experiment/data/Anna',...
    'dataLogs/S4/Experiment/data/Max','dataLogs/S5/Experiment/data/Yossi','dataLogs/S6/Experiment/data/Shir',...
-   'dataLogs/S7/Experiment/data/Meron','dataLogs/S8/Experiment/data/Dana','dataLogs/S9/Experiment/data/Meitav'};
+   'dataLogs/S7/Experiment/data/Meron','dataLogs/S8/Experiment/data/Dana','dataLogs/S9/Experiment/data/Meitav',...
+   'dataLogs/S10/Experiment/data/Yael','dataLogs/S11/Experiment/data/Yogev'};
 %filenames = { 'dataLogs/S1/Experiment/data/Inbali'};
 numsub = length(filenames);
 n = 10;
@@ -109,8 +110,8 @@ else
     
     
 end
-   K2_val_u1_s = sort(K2_val_u1);
-   K2_val_u2_s = sort(K2_val_u2); 
+   [K2_val_u1_s,i_u1] = sort(K2_val_u1);
+   [K2_val_u2_s,i_u2] = sort(K2_val_u2); 
     
 %Save on a matrix the following data for every subject
 %name of the subject
@@ -121,72 +122,171 @@ end
 %Average error first segment for both K1
 %Average error second segment for both K1
 
-%Max error first segment for both K1
-figure(1),title('Max error first segment K1: 70 N/m');
-%f_1(k) = subplot(1,numsub,k);
-plot(K2_val_u1, MAX_e_1seg_u1, 'o');
-xlabel('K2 [N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u1_s);
-%linkaxes(f_1,'xy'); 
-hold on;
-figure(2),title('Max error first segment K1: 110 N/m');
-% f_2(k) = subplot(1,numsub,k)
-plot(K2_val_u2, MAX_e_1seg_u2,'*');
-xlabel('K2[N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u2_s);
-hold on;
-% linkaxes(f_2,'xy'); 
-% %Max error second segment for both K1
-figure(3),title('Max error second segment K1: 70 N/m');
-% f_3(k) = subplot(1,numsub,k)
-plot(K2_val_u1, MAX_e_2seg_u1,'+');
- xlabel('K2 [N/m]');
- ylabel('Error [m]');
- xticks(K2_val_u1_s);
- hold on;
-% linkaxes(f_3,'xy'); 
- figure(4),title('Max error second segment K1: 110 N/m');
-% f_4(k) = subplot(1,numsub,k);
-plot(K2_val_u2, MAX_e_2seg_u2,'d');
- xlabel('K2[N/m]');
- ylabel('Error [m]');
- xticks(K2_val_u2_s);
- hold on;
-% linkaxes(f_4,'xy');
-% %Average error first segment for both K1
- figure(5),title('Mean error first segment K1: 70 N/m');
-% f_5(k) = subplot(1,numsub,k)
-plot(K2_val_u1,  AVG_e_1seg_u1,'s');
-xlabel('K2 [N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u1_s);
-% linkaxes(f_5,'xy');
-hold on;
-figure(6),title('Mean error first segment K1: 110 N/m');
-% f_6(k) = subplot(1,numsub,k)
-plot(K2_val_u2,  AVG_e_1seg_u2,'x');
-xlabel('K2[N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u2_s);
-% linkaxes(f_6,'xy');
-hold on;
-% %Average error second segment for both K1
-figure(7),title('Mean error second segment K1: 70 N/m');
-% f_7(k) = subplot(1,numsub,k)
-plot(K2_val_u1,  AVG_e_2seg_u1,'p');
-xlabel('K2 [N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u1_s);
-hold on;
-% linkaxes(f_7,'xy');
-figure(8),title('Mean error second segment K1: 110 N/m');
-% f_8(k) = subplot(1,numsub,k)
-plot(K2_val_u2,  AVG_e_2seg_u2,'h');
-xlabel('K2[N/m]');
-ylabel('Error [m]');
-xticks(K2_val_u2_s);
-hold on;
-% linkaxes(f_8,'xy');
+M_1(k,:) = MAX_e_1seg_u1(i_u1);
+M_2(k,:) = MAX_e_1seg_u2(i_u2);
+M_3(k,:) = MAX_e_2seg_u1(i_u1);
+M_4(k,:) = MAX_e_2seg_u2(i_u2);
+M_5(k,:) = AVG_e_1seg_u1(i_u1);
+M_6(k,:) = AVG_e_1seg_u2(i_u2);
+M_7(k,:) = AVG_e_2seg_u1(i_u1);
+M_8(k,:) = AVG_e_2seg_u2(i_u2);
+
+
+%%
+% %Max error first segment for both K1
+% figure(1),title('Max error first segment K1: 70 N/m');
+% %f_1(k) = subplot(1,numsub,k);
+% plot(K2_val_u1, MAX_e_1seg_u1, 'o');
+% xlabel('K2 [N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u1_s);
+% %linkaxes(f_1,'xy'); 
+% hold on;
+% figure(2),title('Max error first segment K1: 110 N/m');
+% % f_2(k) = subplot(1,numsub,k)
+% plot(K2_val_u2, MAX_e_1seg_u2,'*');
+% xlabel('K2[N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u2_s);
+% hold on;
+% % linkaxes(f_2,'xy'); 
+% % %Max error second segment for both K1
+% figure(3),title('Max error second segment K1: 70 N/m');
+% % f_3(k) = subplot(1,numsub,k)
+% plot(K2_val_u1, MAX_e_2seg_u1,'+');
+%  xlabel('K2 [N/m]');
+%  ylabel('Error [m]');
+%  xticks(K2_val_u1_s);
+%  hold on;
+% % linkaxes(f_3,'xy'); 
+%  figure(4),title('Max error second segment K1: 110 N/m');
+% % f_4(k) = subplot(1,numsub,k);
+% plot(K2_val_u2, MAX_e_2seg_u2,'d');
+%  xlabel('K2[N/m]');
+%  ylabel('Error [m]');
+%  xticks(K2_val_u2_s);
+%  hold on;
+% % linkaxes(f_4,'xy');
+% % %Average error first segment for both K1
+%  figure(5),title('Mean error first segment K1: 70 N/m');
+% % f_5(k) = subplot(1,numsub,k)
+% plot(K2_val_u1,  AVG_e_1seg_u1,'s');
+% xlabel('K2 [N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u1_s);
+% % linkaxes(f_5,'xy');
+% hold on;
+% figure(6),title('Mean error first segment K1: 110 N/m');
+% % f_6(k) = subplot(1,numsub,k)
+% plot(K2_val_u2,  AVG_e_1seg_u2,'x');
+% xlabel('K2[N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u2_s);
+% % linkaxes(f_6,'xy');
+% hold on;
+% % %Average error second segment for both K1
+% figure(7),title('Mean error second segment K1: 70 N/m');
+% % f_7(k) = subplot(1,numsub,k)
+% plot(K2_val_u1,  AVG_e_2seg_u1,'p');
+% xlabel('K2 [N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u1_s);
+% hold on;
+% % linkaxes(f_7,'xy');
+% figure(8),title('Mean error second segment K1: 110 N/m');
+% % f_8(k) = subplot(1,numsub,k)
+% plot(K2_val_u2,  AVG_e_2seg_u2,'h');
+% xlabel('K2[N/m]');
+% ylabel('Error [m]');
+% xticks(K2_val_u2_s);
+% hold on;
+% % linkaxes(f_8,'xy');
 end
+%%
+
+    m_1 = mean(M_1);
+    m_2 = mean(M_2);
+    m_3 = mean(M_3);
+    m_4 = mean(M_4);
+    m_5 = mean(M_5);
+    m_6 = mean(M_6);
+    m_7 = mean(M_7);
+    m_8 = mean(M_8);
+
+%Max error first segment for both K1
+% figure(1),bar(K2_val_u1_s, m_1,'EdgeColor','black','FaceColor',[0.0 0.6 0.7]);
+% title('Max error first segment K1: 70 N/m across subject');
+% xlabel('K2 [N/m]'),ylabel('Error [m]'),xticks(K2_val_u1_s);
+% axis([0 85 0 0.1])
+% figure(2),bar(K2_val_u2_s, m_2);
+% title('Max error first segment K1: 110 N/m across subject');
+% xlabel('K2[N/m]'),ylabel('Error [m]'),xticks(K2_val_u2_s);
+% axis([0 140 0 0.1])
+% % %Max error second segment for both K1
+% figure(3),bar(K2_val_u1_s, m_3,'FaceColor',[0.0 0.6 0.7]);
+% title('Max error second segment K1: 70 N/m across subject');
+% xlabel('K2 [N/m]'),ylabel('Error [m]'),xticks(K2_val_u1_s);
+% axis([0 85 0 0.1])
+% figure(4),bar(K2_val_u2_s, m_4);
+% title('Max error second segment K1: 110 N/m across subject');
+% xlabel('K2[N/m]'),ylabel('Error [m]'),xticks(K2_val_u2_s);
+% axis([0 140 0 0.1])
+% % %Average error first segment for both K1
+% figure(5),bar(K2_val_u1_s,  m_5,'FaceColor',[0.0 0.6 0.7]);
+% title('Mean error first segment K1: 70 N/m across subject');
+% xlabel('K2 [N/m]'),ylabel('Error [m]'),xticks(K2_val_u1_s);
+% axis([0 85 0 0.1])
+% figure(6),bar(K2_val_u2_s,  m_6);
+% title('Mean error first segment K1: 110 N/m across subject');
+% xlabel('K2[N/m]'),ylabel('Error [m]'),xticks(K2_val_u2_s);
+% axis([0 140 0 0.1])
+% % %Average error second segment for both K1
+% figure(7),bar(K2_val_u1_s,  m_7,'FaceColor',[0.0 0.6 0.7]);
+% title('Mean error second segment K1: 70 N/m across subject');
+% xlabel('K2 [N/m]'),ylabel('Error [m]'),xticks(K2_val_u1_s);
+% axis([0 85 0 0.1])
+% figure(8),bar(K2_val_u2_s,  m_8);
+% title('Mean error second segment K1: 110 N/m across subject');
+% xlabel('K2[N/m]'),ylabel('Error [m]'),xticks(K2_val_u2_s);
+% axis([0 140 0 0.1])
+
+
+
+%% BOXPLOT
+
+%Max error first segment for both K1
+figure(1),boxplot(M_1,K2_val_u1_s);
+title('Max error first segment K1: 70 N/m across subject');
+xlabel('K2 [N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+figure(2),boxplot(M_2,K2_val_u2_s);
+title('Max error first segment K1: 110 N/m across subject');
+xlabel('K2[N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+% %Max error second segment for both K1
+figure(3),boxplot(M_3,K2_val_u1_s);
+title('Max error second segment K1: 70 N/m across subject');
+xlabel('K2 [N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+figure(4),boxplot(M_4,K2_val_u2_s)
+title('Max error second segment K1: 110 N/m across subject');
+xlabel('K2[N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+% %Average error first segment for both K1
+figure(5),boxplot(M_5,K2_val_u1_s)
+title('Mean error first segment K1: 70 N/m across subject');
+xlabel('K2 [N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+figure(6),boxplot(M_6,K2_val_u2_s)
+title('Mean error first segment K1: 110 N/m across subject');
+xlabel('K2[N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
+% %Average error second segment for both K1
+figure(7),boxplot(M_7,K2_val_u1_s)
+title('Mean error second segment K1: 70 N/m across subject');
+xlabel('K2 [N/m]'),ylabel('Error [m]'),xticks(K2_val_u1_s);
+axis([0 7 0 0.15]);
+figure(8),boxplot(M_8,K2_val_u2_s)
+title('Mean error second segment K1: 110 N/m across subject');
+xlabel('K2[N/m]'),ylabel('Error [m]');
+axis([0 7 0 0.15]);
