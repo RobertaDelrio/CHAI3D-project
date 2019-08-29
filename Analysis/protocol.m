@@ -55,4 +55,4 @@ fclose(fileL1);
 F = fe.*J;
 [C,IA,IC] = unique(F(1:60))
 T = table(ne',fe',J',F','VariableNames', {'K1','K2','L1','Force'});
-save('protocol_14.mat', 'T')
+save('protocol_44.mat', 'T')

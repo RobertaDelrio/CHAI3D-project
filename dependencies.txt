@@ -1,0 +1,2 @@
+$(chai3d)/extras/GLFW\include;$(chai3d)/src;$(chai3d)/external/Eigen;$(chai3d)/external/glew/include;$(chai3d)/extras/glfw/include
+$(chai3d)/lib/$(Configuration)/$(Platform);$(chai3d)/extras/glfw/lib/$(Configuration)/$(Platform)
